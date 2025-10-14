@@ -1,0 +1,32 @@
+# === AMBIENTE VIRTUAL ===
+venv/
+.env/
+
+# === BANCO DE DADOS LOCAL ===
+db.sqlite3
+
+# === ARQUIVOS PYTHON COMPILADOS ===
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# === ARQUIVOS DE LOG / TEMPORÁRIOS ===
+*.log
+*.pot
+*.swp
+
+# === CONFIGURAÇÕES DE EDITOR ===
+.vscode/
+.idea/
+
+# === MIGRATIONS (CACHE INTERNO DO DJANGO) ===
+*/__pycache__/
+*/migrations/__pycache__/
+
+# === ARQUIVOS DE MÍDIA (uploads locais) ===
+media/
+
+# === ARQUIVOS DO SISTEMA (Windows / macOS) ===
+.DS_Store
+Thumbs.db
