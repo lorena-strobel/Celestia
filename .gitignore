@@ -1,32 +1,40 @@
 # === AMBIENTE VIRTUAL ===
+virtual/
 venv/
-.env/
+.env
+*.env
 
 # === BANCO DE DADOS LOCAL ===
 db.sqlite3
 
-# === ARQUIVOS PYTHON COMPILADOS ===
+# === ARQUIVOS PYTHON COMPILADOS / CACHE ===
 __pycache__/
 *.py[cod]
 *.pyo
 *.pyd
 
+# === MIGRAÇÕES (caches internos do Django) ===
+*/migrations/__pycache__/
+# Se quiser ignorar todas as migrações exceto __init__.py, pode usar:
+# */migrations/
+# !*/migrations/__init__.py
+
 # === ARQUIVOS DE LOG / TEMPORÁRIOS ===
 *.log
 *.pot
 *.swp
+*.pyc
 
-# === CONFIGURAÇÕES DE EDITOR ===
+# === ESTÁTICOS COLETADOS ===
+staticfiles/
+
+# === CONFIGURAÇÕES DO EDITOR / SISTEMA ===
 .vscode/
 .idea/
-
-# === MIGRATIONS (CACHE INTERNO DO DJANGO) ===
-*/__pycache__/
-*/migrations/__pycache__/
-
-# === ARQUIVOS DE MÍDIA (uploads locais) ===
-media/
-
-# === ARQUIVOS DO SISTEMA (Windows / macOS) ===
 .DS_Store
 Thumbs.db
+
+# === OUTROS ARQUIVOS LOCAIS ===
+*.sqlite3
+*.db
+tmp/
