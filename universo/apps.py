@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class SistemasEstelaresConfig(AppConfig):
+class UniversoConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'sistemas_estelares'
+    name = 'universo'
