@@ -129,7 +129,7 @@
                 {% for missao in missoes %}
                 <div class="item-card">
                     <h5>{{ missao.nome }}</h5>
-                    <p class="text-muted">{{ missao.agencia }}</p>
+                    <p class="missao-agencia">{{ missao.agencia }}</p>
                     <p>
                         <span class="badge {% if missao.status == 'ativa' %}bg-success
                                            {% elif missao.status == 'concluida' %}bg-info
@@ -137,7 +137,7 @@
                             {{ missao.get_status_display }}
                         </span>
                     </p>
-                    <p class="text-muted">Lançamento: {{ missao.data_lancamento|date:"d/m/Y" }}</p>
+                    <p class="missao-lacamento">Lançamento: {{ missao.data_lancamento|date:"d/m/Y" }}</p>
                     <a href="{% url 'detalhes_missao' missao.pk %}" class="btn btn-sm btn-outline-primary mt-2">Ver Missão</a>
                 </div>
                 {% endfor %}
@@ -156,10 +156,4 @@
     </div>
 </div>
 
-<!-- CSRF Token para exclusão -->
-<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-{% endblock %}
-
-{% block extra_js %}
-<script src="{% static 'js/confirmacao-exclusao.js' %}"></script>
 {% endblock %}

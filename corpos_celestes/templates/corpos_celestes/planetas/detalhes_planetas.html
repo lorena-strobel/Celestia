@@ -32,7 +32,6 @@
                     <img src="{{ planeta.imagem.url }}" alt="{{ planeta.nome }}" class="detalhes-imagem">
                 {% else %}
                     <div class="sem-imagem">
-                        <div class="sem-imagem-icon">🪐</div>
                         <p>Imagem não disponível</p>
                     </div>
                 {% endif %}
@@ -146,6 +145,7 @@
         <div class="detalhes-actions mt-4 pt-4 border-top">
             <a href="{% url 'editar_planeta' planeta.id %}" class="btn btn-warning">
                 Editar Planeta
+            </a>
         </div>
         {% endif %}
     </div>

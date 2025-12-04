@@ -248,16 +248,9 @@
                             <strong>Orçamento:</strong> ${{ missao.orcamento }} milhões
                         </p>
                         {% endif %}
-                        
-                        <p class="mt-2 text-muted">
-                            {{ missao.objetivo|truncatewords:15 }}
-                        </p>
                     </div>
 
                     <div class="card-actions mt-3 text-center">
-                        <a href="{% url 'detalhes_missao' missao.pk %}" class="btn btn-outline-info btn-sm">
-                            Detalhes
-                        </a>
                         {% if user.is_superuser %}
                         <a href="{% url 'editar_missao' missao.pk %}" class="btn btn-outline-warning btn-sm">
                             Editar

@@ -452,3 +452,13 @@ body.detalhes-page {
     border-color: #6c63ff;
     transform: translateY(-2px);
 }
+
+.missao-agencia {
+    color: #f1eee3; /* muda a cor do texto da agência */
+    font-weight: 500;
+}
+
+.missao-lancamento {
+    color: #f1eee3; /* muda a cor do texto da data de lançamento */
+    font-weight: 500;
+}
