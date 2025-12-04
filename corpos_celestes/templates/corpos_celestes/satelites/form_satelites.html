@@ -10,7 +10,7 @@
 <style>
     .hero-header {
         background: linear-gradient(135deg, rgba(50, 50, 80, 0.55) 0%, rgba(70, 70, 100, 0.95) 100%), 
-        url('/static/images/moons-bg.jpg') center/cover no-repeat;
+        url('/static/images/moon.jpg') center/cover no-repeat;
     }
 </style>
 {% endblock %}
@@ -202,9 +202,9 @@
             <!-- Botões -->
             <div class="form-actions">
                 <button type="submit" class="btn btn-primary btn-form">
-                    {% if titulo == "Criar Satélite" %} 🌙 Criar Satélite{% else %} 💫 Salvar Alterações{% endif %}
+                    {% if titulo == "Criar Satélite" %} Criar Satélite{% else %} 💫 Salvar Alterações{% endif %}
                 </button>
-                <a href="{% url 'listar_satelites' %}" class="btn btn-secondary btn-form"> 🚫 Cancelar</a>
+                <a href="{% url 'listar_satelites' %}" class="btn btn-secondary btn-form"> Cancelar</a>
             </div>
         </form>
     </div>
