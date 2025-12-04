@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ titulo }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/listagens.css' %}">
+<link rel="stylesheet" href="{% static 'css/form.css' %}">
+<style>
+.hero-header {
+    background: linear-gradient(135deg, rgba(10, 10, 50, 0.55) 0%, rgba(30, 30, 80, 0.95) 100%), 
+    url('/static/images/system.webp') center/cover no-repeat;
+}
+</style>
+{% endblock %}
+
+{% block hero %}
+<div class="hero-header">
+    <div class="hero-wrapper">
+        <div class="hero-content">
+            <div class="btn-voltar-container">
+                <a href="{% url 'listar_sistemas' %}" class="btn-voltar">
+                    ← Voltar para Sistemas
+                </a>
+            </div>
+
+            <h1 class="display-1 fw-bold">{{ titulo }}</h1>
+
+            <p class="lead">
+                {% if titulo == "Criar Sistema Planetário" %}
+                    Adicione um novo sistema ao catálogo
+                {% else %}
+                    Edite as informações do sistema
+                {% endif %}
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="form-container">
+
+        <form method="POST" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+                <strong>Erro!</strong> Corrija os campos abaixo.
+                {{ form.non_field_errors }}
+            </div>
+            {% endif %}
+
+            <!-- Linha 1: Nome e Estrela -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">{{ form.nome.label }}</label>
+                        <input type="text" name="{{ form.nome.name }}" class="form-control"
+                               value="{{ form.nome.value|default:'' }}">
+                        {% if form.nome.errors %}
+                        <ul class="error-list">
+                            {% for error in form.nome.errors %}<li>{{ error }}</li>{% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">{{ form.estrela_principal.label }}</label>
+                        <input type="text" name="{{ form.estrela_principal.name }}" class="form-control"
+                               value="{{ form.estrela_principal.value|default:'' }}">
+                        {% if form.estrela_principal.errors %}
+                        <ul class="error-list">
+                            {% for error in form.estrela_principal.errors %}<li>{{ error }}</li>{% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Linha 2: Galáxia, Idade e Nº de Planetas -->
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="form-label">{{ form.galaxia.label }}</label>
+                        <select name="{{ form.galaxia.name }}" class="form-select">
+                            <option value="">Selecione</option>
+                            {% for choice in form.galaxia.field.choices %}
+                                <option value="{{ choice.0 }}" {% if form.galaxia.value == choice.0 %}selected{% endif %}>
+                                    {{ choice.1 }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        {% if form.galaxia.errors %}
+                        <ul class="error-list">
+                            {% for error in form.galaxia.errors %}<li>{{ error }}</li>{% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="form-label">{{ form.idade.label }}</label>
+                        <input type="number" name="{{ form.idade.name }}" class="form-control"
+                               value="{{ form.idade.value|default:'' }}" step="0.1">
+                        {% if form.idade.errors %}
+                        <ul class="error-list">
+                            {% for error in form.idade.errors %}<li>{{ error }}</li>{% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="form-label">{{ form.numero_planetas.label }}</label>
+                        <input type="number" name="{{ form.numero_planetas.name }}" class="form-control"
+                               value="{{ form.numero_planetas.value|default:'' }}">
+                        {% if form.numero_planetas.errors %}
+                        <ul class="error-list">
+                            {% for error in form.numero_planetas.errors %}<li>{{ error }}</li>{% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Imagem -->
+            <div class="form-group">
+                <label class="form-label">{{ form.imagem.label }}</label>
+                <input type="file" name="{{ form.imagem.name }}" class="form-control">
+            </div>
+
+            <!-- Descrição -->
+            <div class="form-group">
+                <label class="form-label">{{ form.descricao.label }}</label>
+                <textarea name="{{ form.descricao.name }}" class="form-control form-textarea">
+                    {{ form.descricao.value|default:'' }}
+                </textarea>
+                {% if form.descricao.errors %}
+                <ul class="error-list">
+                    {% for error in form.descricao.errors %}<li>{{ error }}</li>{% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+
+            <!-- Botões -->
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary btn-form">
+                    {% if titulo == "Criar Sistema Planetário" %}Criar{% else %}Salvar{% endif %}
+                </button>
+                <a href="{% url 'listar_sistemas' %}" class="btn btn-secondary btn-form">Cancelar</a>
+            </div>
+
+        </form>
+    </div>
+</div>
+{% endblock %}

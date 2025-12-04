@@ -1,0 +1,168 @@
+<!-- templates/universo/nebulosas/detalhes_nebulosas.html -->
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ nebulosa.nome }} - Detalhes da Nebulosa{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/detalhes.css' %}">
+<style>
+    body.detalhes-page {
+        background: linear-gradient(rgba(20, 20, 40, 0.9), rgba(40, 20, 60, 0.9)),
+                    url('/static/images/nebula-detail-bg.jpg');
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- Botão Voltar -->
+    <div class="mb-4">
+        <a href="{% url 'listar_nebulosas' %}" class="btn btn-outline-primary">
+            ← Voltar para Nebulosas
+        </a>
+    </div>
+
+    <!-- Card Principal de Detalhes -->
+    <div class="detalhes-card">
+        <div class="row">
+            <!-- Coluna da Imagem -->
+            <div class="col-md-6">
+                {% if nebulosa.imagem %}
+                    <img src="{{ nebulosa.imagem.url }}" alt="{{ nebulosa.nome }}" class="detalhes-imagem">
+                {% else %}
+                    <div class="sem-imagem">
+                        <div class="sem-imagem-icon">☁️</div>
+                        <p>Imagem não disponível</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Coluna das Informações -->
+            <div class="col-md-6">
+                <div class="detalhes-content">
+                    <h1 class="detalhes-titulo">{{ nebulosa.nome }}</h1>
+                    
+                    <!-- Badges -->
+                    <div class="badges-container mb-4">
+                        <span class="badge tipo-{{ nebulosa.tipo }}">
+                            {{ nebulosa.get_tipo_display }}
+                        </span>
+                        <span class="badge nebulosa-badge">
+                            Nebulosa
+                        </span>
+                    </div>
+
+                    <!-- Informações Principais -->
+                    <div class="informacoes-grid">
+                        {% if nebulosa.distancia %}
+                        <div class="info-item">
+                            <div class="info-label">Distância</div>
+                            <div class="info-value distance-value">{{ nebulosa.distancia|floatformat:0 }} anos-luz</div>
+                        </div>
+                        {% endif %}
+
+                        {% if nebulosa.diametro %}
+                        <div class="info-item">
+                            <div class="info-label">Diâmetro</div>
+                            <div class="info-value size-value">{{ nebulosa.diametro|floatformat:1 }} anos-luz</div>
+                        </div>
+                        {% endif %}
+
+                        {% if nebulosa.magnitude %}
+                        <div class="info-item">
+                            <div class="info-label">Magnitude</div>
+                            <div class="info-value">{{ nebulosa.magnitude|floatformat:1 }}</div>
+                            <div class="info-desc">
+                                {% if nebulosa.magnitude < 0 %}Extremamente brilhante
+                                {% elif nebulosa.magnitude < 3 %}Muito brilhante
+                                {% elif nebulosa.magnitude < 6 %}Visível a olho nu
+                                {% else %}Requer telescópio{% endif %}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Descrição -->
+        {% if nebulosa.descricao %}
+        <div class="descricao-section mt-5">
+            <h3 class="descricao-titulo">Sobre {{ nebulosa.nome }}</h3>
+            <div class="descricao-content">
+                {{ nebulosa.descricao|linebreaks }}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Tipo de Nebulosa -->
+        <div class="informacoes-adicionais mt-4">
+            <h3 class="info-adicional-titulo">Tipo de Nebulosa</h3>
+            <div class="info-item full-width mt-3">
+                <div class="info-label">{{ nebulosa.get_tipo_display }}</div>
+                <div class="info-desc">
+                    {% if nebulosa.tipo == 'emissao' %}
+                    Nebulosa que brilha por si mesma, ionizada pela radiação ultravioleta de estrelas quentes próximas.
+                    {% elif nebulosa.tipo == 'reflexao' %}
+                    Nebulosa que reflete a luz de estrelas próximas, aparecendo azul devido à dispersão da luz.
+                    {% elif nebulosa.tipo == 'negra' %}
+                    Nuvem densa de poeira que bloqueia a luz das estrelas atrás dela, formando silhuetas escuras.
+                    {% elif nebulosa.tipo == 'planetaria' %}
+                    Envelope gasoso ejetado por estrelas moribundas, formando estruturas simétricas e coloridas.
+                    {% elif nebulosa.tipo == 'supernova' %}
+                    Remanescente da explosão de uma estrela massiva, expandindo-se rapidamente e emitindo radiação.
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Estatísticas -->
+        <div class="informacoes-adicionais mt-4">
+            <h3 class="info-adicional-titulo">Características</h3>
+            <div class="row mt-4">
+                <div class="col-md-4">
+                    <div class="info-item text-center">
+                        <div class="info-number">
+                            {% if nebulosa.distancia %}{{ nebulosa.distancia|floatformat:0 }}{% else %}?{% endif %}
+                        </div>
+                        <div class="info-label-small">Anos-luz de distância</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="info-item text-center">
+                        <div class="info-number">
+                            {% if nebulosa.diametro %}{{ nebulosa.diametro|floatformat:1 }}{% else %}?{% endif %}
+                        </div>
+                        <div class="info-label-small">Anos-luz de diâmetro</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="info-item text-center">
+                        <div class="info-number">
+                            {% if nebulosa.magnitude %}{{ nebulosa.magnitude|floatformat:1 }}{% else %}?{% endif %}
+                        </div>
+                        <div class="info-label-small">Magnitude</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ações do Admin -->
+        {% if user.is_superuser %}
+        <div class="detalhes-actions mt-4 pt-4 border-top">
+            <a href="{% url 'editar_nebulosa' nebulosa.pk %}" class="btn btn-warning">
+                Editar Nebulosa
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- CSRF Token para exclusão -->
+<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/confirmacao-exclusao.js' %}"></script>
+{% endblock %}

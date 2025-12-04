@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+  .hero-header {
+    background:
+      url("{% static 'images/terra.jpg' %}") center/cover no-repeat;
+  }
+</style>
+{% endblock %}
+
+
+{% block hero %}
+  <header class="hero hero-header text-light text-center">
+    <h1 class="display-5 fw-bold">Celestia Enciclopédia Espacial</h1>
+    <p class="lead mt-3">Descubra o universo, as maravilhas dos corpos celestes e as incríveis missões de exploração espacial.</p>
+  </header>
+{% endblock hero %}
+
+{% block content %}
+  <main class="container my-5">
+    <section class="row g-4 text-center">
+      <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+          <img src="{% static 'images/helix.jpg' %}" class="card-img-top card-img-fixed" alt="Universo" />
+          <div class="card-body">
+            <h5 class="card-title">Universo</h5>
+            <p class="card-text">Explore a vastidão do cosmos, as galáxias, nebulosas e os mistérios que desafiam o conhecimento humano.</p>
+            <a href="{% url 'visualizarUniverso' %}" class="btn btn-custom">Saiba mais</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+          <img src="{% static 'images/urano.jpg' %}" class="card-img-top card-img-fixed" alt="Corpos Celestes" />
+          <div class="card-body">
+            <h5 class="card-title">Corpos Celestes</h5>
+            <p class="card-text">Conheça planetas, estrelas, asteroides, cometas e suas características únicas.</p>
+            <a href="{% url 'visualizarCorposCelestes'%}" class="btn btn-custom">Saiba mais</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+          <img src="{% static 'images/missao.jpg' %}" class="card-img-top card-img-fixed" alt="Exploração Espacial" />
+          <div class="card-body">
+            <h5 class="card-title">Exploração Espacial</h5>
+            <p class="card-text">Acompanhe as missões espaciais e as tecnologias que expandem os horizontes da humanidade.</p>
+            <a href="{% url 'visualizarExploracao' %}" class="btn btn-custom">Saiba mais</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+{% endblock %}

@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Catálogo de Corpos Celestes - Celestia{% endblock %}
+
+{% block extra_css %}
+<style>
+  .hero-header {
+    background: linear-gradient(
+        rgba(0, 0, 0, 0.45),
+        rgba(0, 0, 0, 0.75)
+      ),
+    url("{% static 'images/nebulosa.jpg' %}") center/cover no-repeat;]
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+  }
+</style>
+{% endblock %}
+
+{% block hero %}
+<header class="hero-header text-light py-5">
+    <div class="container">
+        <h1 class="display-5 fw-bold">Catálogo de Corpos Celestes</h1>
+        <p class="lead">Explore estrelas, planetas e luas através do nosso universo digital.</p>
+    </div>
+</header>
+{% endblock %}
+
+{% block content %}
+
+<section class="row g-4">
+
+    <!-- ESTRELAS -->
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+            <img src="{% static 'images/estrela.jpg' %}" class="card-img-top card-img-fixed" alt="Estrelas">
+            <div class="card-body text-center">
+                <h5 class="card-title">Estrelas</h5>
+                <p class="card-text">
+                    Esferas de plasma que iluminam galáxias inteiras e alimentam sistemas planetários.
+                </p>
+
+                <a href="{% url 'listar_estrelas' %}" class="btn btn-custom w-100">Explorar</a>
+
+                {% if user.is_staff %}
+                <small class="d-block mt-2">
+                    <a href="/admin/corpos_celestes/estrela/" class="text-muted">Gerenciar estrelas</a>
+                </small>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- PLANETAS -->
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+            <img src="{% static 'images/planetas.jpg' %}" class="card-img-top card-img-fixed" alt="Planetas">
+            <div class="card-body text-center">
+                <h5 class="card-title">Planetas</h5>
+                <p class="card-text">
+                    Mundos de diferentes composições, climas e histórias orbitando estrelas.
+                </p>
+
+                <a href="{% url 'listar_planetas' %}" class="btn btn-custom w-100">Explorar</a>
+
+                {% if user.is_staff %}
+                <small class="d-block mt-2">
+                    <a href="/admin/corpos_celestes/planeta/" class="text-muted">Gerenciar planetas</a>
+                </small>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- SATÉLITES NATURAIS -->
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+            <img src="{% static 'images/satelites.jpg' %}" class="card-img-top card-img-fixed" alt="Satélites Naturais">
+            <div class="card-body text-center">
+                <h5 class="card-title">Satélites Naturais</h5>
+                <p class="card-text">
+                    Companheiros silenciosos que orbitam planetas e influenciam suas dinâmicas.
+                </p>
+
+                <a href="{% url 'listar_satelites' %}" class="btn btn-custom w-100">Explorar</a>
+
+                {% if user.is_staff %}
+                <small class="d-block mt-2">
+                    <a href="/admin/corpos_celestes/satelitenatural/" class="text-muted">Gerenciar satélites</a>
+                </small>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+</section>
+
+{% endblock %}

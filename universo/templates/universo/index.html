@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Universo - Celestia{% endblock %}
+
+{% block extra_css %}
+<style>
+  .hero-header {
+    background: linear-gradient(
+        rgba(0, 0, 0, 0.45),
+        rgba(0, 0, 0, 0.75)
+      ),
+    url("{% static 'images/galaxia.jpg' %}") center/cover no-repeat;
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+  }
+</style>
+{% endblock %}
+
+{% block hero %}
+<header class="hero-header text-light py-5">
+    <div class="container">
+        <h1 class="display-5 fw-bold">Universo</h1>
+        <p class="lead">Explore galáxias, sistemas planetários e nebulosas através do nosso universo digital.</p>
+    </div>
+</header>
+{% endblock %}
+
+{% block content %}
+
+<section class="row g-4">
+
+    <!-- GALÁXIAS -->
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+            <img src="{% static 'images/galaxia1.jpg' %}" class="card-img-top card-img-fixed" alt="Galáxias">
+            <div class="card-body text-center">
+                <h5 class="card-title">Galáxias</h5>
+                <p class="card-text">
+                    Enormes agrupamentos de estrelas, poeira e gás que formam a estrutura do universo.
+                </p>
+
+                <a href="{% url 'listar_galaxias' %}" class="btn btn-custom w-100">Explorar</a>
+
+                {% if user.is_staff %}
+                <small class="d-block mt-2">
+                    <a href="/admin/universo/galaxia/" class="text-muted">Gerenciar galáxias</a>
+                </small>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- SISTEMAS PLANETÁRIOS -->
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+            <img src="{% static 'images/sistemaplanetario.webp' %}" class="card-img-top card-img-fixed" alt="Sistemas Planetários">
+            <div class="card-body text-center">
+                <h5 class="card-title">Sistemas Planetários</h5>
+                <p class="card-text">
+                    Conjuntos de planetas, asteroides e corpos celestes orbitando uma estrela.
+                </p>
+
+                <a href="{% url 'listar_sistemas' %}" class="btn btn-custom w-100">Explorar</a>
+
+                {% if user.is_staff %}
+                <small class="d-block mt-2">
+                    <a href="/admin/universo/sistemaplanetario/" class="text-muted">Gerenciar sistemas</a>
+                </small>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- NEBULOSAS -->
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+            <img src="{% static 'images/nebulosa.jpg' %}" class="card-img-top card-img-fixed" alt="Nebulosas">
+            <div class="card-body text-center">
+                <h5 class="card-title">Nebulosas</h5>
+                <p class="card-text">
+                    Nuvens gigantes de gás e poeira onde estrelas nascem ou deixam seus vestígios.
+                </p>
+
+                <a href="{% url 'listar_nebulosas' %}" class="btn btn-custom w-100">Explorar</a>
+
+                {% if user.is_staff %}
+                <small class="d-block mt-2">
+                    <a href="/admin/universo/nebulosa/" class="text-muted">Gerenciar nebulosas</a>
+                </small>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+</section>
+
+{% endblock %}

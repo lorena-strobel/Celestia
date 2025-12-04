@@ -1,0 +1,333 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Missões Espaciais{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/listagens.css' %}">
+<style>
+    .hero-header {
+        background: linear-gradient(135deg, rgba(10, 10, 50, 0.55) 0%, rgba(30, 30, 80, 0.95) 100%), 
+        url('/static/images/apolo11.webp') center/cover no-repeat;
+    }
+    /* Estilos para badges de status */
+    .badge.status-planejada { background-color: #6c757d; }
+    .badge.status-ativa { background-color: #0d6efd; }
+    .badge.status-concluida { background-color: #198754; }
+    .badge.status-falhou { background-color: #dc3545; }
+    .badge.status-cancelada { background-color: #6c757d; }
+</style>
+{% endblock %}
+
+{% block hero %}
+<div class="hero-header">
+    <div class="hero-wrapper">
+        <div class="hero-content">
+            <div class="btn-voltar-container">
+                <a href="{% url 'visualizarExploracao' %}" class="btn-voltar">
+                    ← Voltar para Catálogo
+                </a>
+            </div>
+            <h1 class="display-1 fw-bold">Missões Espaciais</h1>
+            <p class="lead">
+                Explore as maiores aventuras da humanidade no espaço. Da Lua a Marte e além, cada missão representa um marco na exploração cósmica.
+            </p>
+            <p>Explore o catálogo de missões do site</p>
+        </div>
+        
+        <div class="hero-stats">
+            <div class="stat-item">
+                <h3>{{ missoes.paginator.count }}</h3>
+                <p>Missões Catalogadas</p>
+            </div>
+            <div class="stat-item">
+                <h3>{{ agencias|length }}</h3>
+                <p>Agências Espaciais</p>
+            </div>
+            <div class="stat-item">
+                <h3>{{ missoes|length }}</h3>
+                <p>Resultados Encontrados</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container missoes-container">
+
+    <!-- Formulário de Busca e Filtros -->
+    <form method="GET" class="search-filters-form mb-4">
+        
+        <!-- Barra de busca principal -->
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="input-group">
+                    <input 
+                        type="text" 
+                        name="busca" 
+                        class="form-control"
+                        placeholder="Buscar por nome, agência ou objetivo..."
+                        value="{{ busca }}"
+                    >
+                    <button type="submit" class="btn btn-primary">Buscar</button>
+                </div>
+            </div>
+            
+            <!-- Ordenação -->
+            <div class="col-md-3">
+                <select name="ordenar" class="form-select" onchange="this.form.submit()">
+                    <option value="-data_lancamento" {% if ordenar == "-data_lancamento" %}selected{% endif %}>Mais Recentes</option>
+                    <option value="data_lancamento" {% if ordenar == "data_lancamento" %}selected{% endif %}>Mais Antigas</option>
+                    <option value="nome" {% if ordenar == "nome" %}selected{% endif %}>Ordenar por Nome</option>
+                    <option value="status" {% if ordenar == "status" %}selected{% endif %}>Ordenar por Status</option>
+                    <option value="agencia" {% if ordenar == "agencia" %}selected{% endif %}>Ordenar por Agência</option>
+                    <option value="tipo" {% if ordenar == "tipo" %}selected{% endif %}>Ordenar por Tipo</option>
+                </select>
+            </div>
+
+            <!-- Botão Limpar -->
+            <div class="col-md-3 d-flex align-items-center">
+                <a href="{% url 'listar_missoes' %}" class="btn btn-secondary w-100">Limpar Filtros</a>
+            </div>
+        </div>
+
+        <!-- Filtros Avançados -->
+        <div class="row mb-3">
+            <div class="col-md-12">
+                <h5 class="text-white mb-3">Filtros Avançados:</h5>
+                
+                <div class="row">
+                    <!-- Filtro Status -->
+                    <div class="col-md-3">
+                        <label class="form-label text-white">Status da Missão</label>
+                        <select name="status" class="form-select">
+                            <option value="">Todos os status</option>
+                            {% for codigo, nome in status_choices %}
+                                <option value="{{ codigo }}" {% if filtros.status == codigo %}selected{% endif %}>
+                                    {{ nome }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Filtro Tipo -->
+                    <div class="col-md-3">
+                        <label class="form-label text-white">Tipo de Missão</label>
+                        <select name="tipo" class="form-select">
+                            <option value="">Todos os tipos</option>
+                            {% for codigo, nome in tipo_choices %}
+                                <option value="{{ codigo }}" {% if filtros.tipo == codigo %}selected{% endif %}>
+                                    {{ nome }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Filtro Agência -->
+                    <div class="col-md-3">
+                        <label class="form-label text-white">Agência Espacial</label>
+                        <select name="agencia" class="form-select">
+                            <option value="">Todas as agências</option>
+                            {% for agencia in agencias %}
+                                <option value="{{ agencia }}" {% if filtros.agencia == agencia %}selected{% endif %}>
+                                    {{ agencia }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Filtro Orçamento -->
+                    <div class="col-md-3">
+                        <label class="form-label text-white">Orçamento Máximo ($ milhões)</label>
+                        <input 
+                            type="number" 
+                            name="orcamento_max" 
+                            class="form-control"
+                            placeholder="Ex: 1000"
+                            min="0"
+                            value="{{ request.GET.orcamento_max }}"
+                        >
+                        <small class="form-text text-white-50">Filtrar por orçamento</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botão Aplicar Filtros -->
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <button type="submit" class="btn btn-primary btn-lg">Aplicar Filtros</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Informações sobre os filtros ativos -->
+    {% if busca or filtros.status or filtros.tipo or filtros.agencia or request.GET.orcamento_max %}
+    <div class="alert alert-info">
+        <strong>Filtros ativos:</strong>
+        {% if busca %}Busca: "{{ busca }}"{% endif %}
+        {% if filtros.status %} | Status: 
+            {% for codigo, nome in status_choices %}
+                {% if codigo == filtros.status %}{{ nome }}{% endif %}
+            {% endfor %}
+        {% endif %}
+        {% if filtros.tipo %} | Tipo: 
+            {% for codigo, nome in tipo_choices %}
+                {% if codigo == filtros.tipo %}{{ nome }}{% endif %}
+            {% endfor %}
+        {% endif %}
+        {% if filtros.agencia %} | Agência: {{ filtros.agencia }}{% endif %}
+        {% if request.GET.orcamento_max %} | Orçamento máximo: ${{ request.GET.orcamento_max }} milhões{% endif %}
+        <a href="{% url 'listar_missoes' %}" class="float-end text-decoration-none">× Limpar todos</a>
+    </div>
+    {% endif %}
+
+    <!-- Botão de adicionar -->
+    {% if user.is_superuser %}
+    <div class="actions mb-3">
+        <a href="{% url 'criar_missao' %}" class="btn btn-success">
+            Adicionar Nova Missão
+        </a>
+    </div>
+    {% endif %}
+
+    <!-- Contador de resultados -->
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <p class="text-white">
+                {% if busca or filtros.status or filtros.tipo or filtros.agencia or request.GET.orcamento_max %}
+                Mostrando <strong>{{ missoes.paginator.count }}</strong> miss{{ missoes.paginator.count|pluralize:"ão,ões" }} encontrada{{ missoes.paginator.count|pluralize:"s" }}
+                {% else %}
+                Total de <strong>{{ missoes.paginator.count }}</strong> miss{{ missoes.paginator.count|pluralize:"ão,ões" }} no catálogo
+                {% endif %}
+            </p>
+        </div>
+    </div>
+
+    <!-- Grid de cards -->
+    <div class="cards-grid">
+        {% for missao in missoes %}
+            <div class="card card-clickable">  
+                <div class="card-body">
+                    <a href="{% url 'detalhes_missao' missao.pk %}" class="card-link" style="text-decoration: none; color: inherit; display: block;">
+                    <div class="card-badges mb-2">
+                        <span class="badge status-{{ missao.status }}">
+                            {{ missao.get_status_display }}
+                        </span>
+                        <span class="badge bg-secondary">{{ missao.get_tipo_display }}</span>
+                    </div>
+                    
+                    <h3 class="card-title text-center">{{ missao.nome }}</h3>
+                    
+                    {% if missao.imagem %}
+                        <img src="{{ missao.imagem.url }}" alt="{{ missao.nome }}" class="card-img">
+                    {% else %}
+                        <div class="card-img-placeholder">
+                            <span>Sem imagem</span>
+                        </div>
+                    {% endif %}
+                    
+                    
+                    <div class="card-info mt-2">
+                        <p class="mb-1">
+                            <strong>Agência:</strong> {{ missao.agencia }}
+                        </p>
+                        
+                        <p class="mb-1">
+                            <strong>Lançamento:</strong> {{ missao.data_lancamento|date:"d/m/Y" }}
+                        </p>
+                        
+                        {% if missao.duracao_dias %}
+                        <p class="mb-1">
+                            <strong>Duração:</strong> {{ missao.duracao_dias }} dias
+                        </p>
+                        {% endif %}
+                        
+                        {% if missao.orcamento %}
+                        <p class="mb-1">
+                            <strong>Orçamento:</strong> ${{ missao.orcamento }} milhões
+                        </p>
+                        {% endif %}
+                        
+                        <p class="mt-2 text-muted">
+                            {{ missao.objetivo|truncatewords:15 }}
+                        </p>
+                    </div>
+
+                    <div class="card-actions mt-3 text-center">
+                        <a href="{% url 'detalhes_missao' missao.pk %}" class="btn btn-outline-info btn-sm">
+                            Detalhes
+                        </a>
+                        {% if user.is_superuser %}
+                        <a href="{% url 'editar_missao' missao.pk %}" class="btn btn-outline-warning btn-sm">
+                            Editar
+                        </a>
+                        <button class="btn btn-outline-danger btn-sm btn-excluir"
+                            data-url="{% url 'excluir_missao' missao.pk %}"
+                            data-nome="{{ missao.nome }}"
+                            data-tipo="missão">
+                            Excluir
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+        {% empty %}
+            <div class="empty-state text-center" style="grid-column: 1 / -1;">
+                <h3 class="text-white">
+                    {% if busca %}
+                    "{{ busca }}" não encontrada no catálogo
+                    {% else %}
+                    Nenhuma missão encontrada
+                    {% endif %}
+                </h3>
+                <p class="text-white-50">
+                    {% if busca %}
+                    Tente verificar a ortografia ou usar termos diferentes.<br>
+                    {% else %}
+                    Tente ajustar os filtros de busca.
+                    {% endif %}
+                </p>
+                <div class="mt-4">
+                    <a href="{% url 'listar_missoes' %}" class="btn btn-primary me-2">Ver Todas as Missões</a>
+                    {% if user.is_superuser %}
+                    <a href="{% url 'criar_missao' %}" class="btn btn-success">Adicionar Nova Missão</a>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Paginação -->
+    {% if missoes.has_other_pages %}
+    <nav aria-label="Paginação" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if missoes.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?pagina={{ missoes.previous_page_number }}{% if request.GET.urlencode %}&{{ request.GET.urlencode }}{% endif %}">Anterior</a>
+                </li>
+            {% endif %}
+
+            {% for num in missoes.paginator.page_range %}
+                {% if missoes.number == num %}
+                    <li class="page-item active">
+                        <span class="page-link">{{ num }}</span>
+                    </li>
+                {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="?pagina={{ num }}{% if request.GET.urlencode %}&{{ request.GET.urlencode }}{% endif %}">{{ num }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if missoes.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?pagina={{ missoes.next_page_number }}{% if request.GET.urlencode %}&{{ request.GET.urlencode }}{% endif %}">Próxima</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}

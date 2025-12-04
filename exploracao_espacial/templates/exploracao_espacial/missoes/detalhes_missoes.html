@@ -1,0 +1,154 @@
+<!-- templates/exploracao_espacial/missoes/detalhes_missoes.html -->
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ missao.nome }} - Detalhes da Missão{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/detalhes.css' %}">
+<style>
+    body.detalhes-page {
+        background: linear-gradient(rgba(13, 13, 30, 0.9), rgba(25, 25, 50, 0.9)),
+                    url('/static/images/mission-detail-bg.jpg');
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- Botão Voltar -->
+    <div class="mb-4">
+        <a href="{% url 'listar_missoes' %}" class="btn btn-outline-primary">
+            ← Voltar para Missões
+        </a>
+    </div>
+
+    <!-- Card Principal de Detalhes -->
+    <div class="detalhes-card">
+        <div class="row">
+            <!-- Coluna da Imagem -->
+            <div class="col-md-6">
+                {% if missao.imagem %}
+                    <img src="{{ missao.imagem.url }}" alt="{{ missao.nome }}" class="detalhes-imagem">
+                {% else %}
+                    <div class="sem-imagem">
+                        <div class="sem-imagem-icon">🚀</div>
+                        <p>Imagem não disponível</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Coluna das Informações -->
+            <div class="col-md-6">
+                <div class="detalhes-content">
+                    <h1 class="detalhes-titulo">{{ missao.nome }}</h1>
+                    
+                    <!-- Badges -->
+                    <div class="badges-container mb-4">
+                        <span class="badge status-badge status-{{ missao.status }}">
+                            {{ missao.get_status_display }}
+                        </span>
+                        <span class="badge classificacao-badge">
+                            {{ missao.get_tipo_display }}
+                        </span>
+                        <span class="badge estagio-badge">
+                            {{ missao.agencia }}
+                        </span>
+                    </div>
+
+                    <!-- Informações Principais -->
+                    <div class="informacoes-grid">
+                        <div class="info-item">
+                            <div class="info-label">Data de Lançamento</div>
+                            <div class="info-value">{{ missao.data_lancamento|date:"d/m/Y" }}</div>
+                        </div>
+
+                        {% if missao.data_termino %}
+                        <div class="info-item">
+                            <div class="info-label">Data de Término</div>
+                            <div class="info-value">{{ missao.data_termino|date:"d/m/Y" }}</div>
+                        </div>
+                        {% endif %}
+
+                        {% if missao.duracao_dias %}
+                        <div class="info-item">
+                            <div class="info-label">Duração</div>
+                            <div class="info-value">{{ missao.duracao_dias }} dias</div>
+                        </div>
+                        {% endif %}
+
+                        {% if missao.orcamento %}
+                        <div class="info-item">
+                            <div class="info-label">Orçamento</div>
+                            <div class="info-value">${{ missao.orcamento }} milhões</div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Objetivo da Missão -->
+        <div class="descricao-section mt-5">
+            <h3 class="descricao-titulo">Objetivo da Missão</h3>
+            <div class="descricao-content">
+                {{ missao.objetivo|linebreaks }}
+            </div>
+        </div>
+
+        <!-- Curiosidades -->
+        {% if missao.curiosidades %}
+        <div class="descricao-section mt-4">
+            <h3 class="descricao-titulo">Curiosidades</h3>
+            <div class="descricao-content">
+                {{ missao.curiosidades|linebreaks }}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Tripulação -->
+        {% if tripulantes %}
+        <div class="informacoes-adicionais mt-5">
+            <h3 class="info-adicional-titulo">Tripulação ({{ tripulantes.count }})</h3>
+            <div class="items-grid mt-4">
+                {% for astronauta in tripulantes %}
+                <div class="item-card">
+                    {% if astronauta.foto %}
+                        <img src="{{ astronauta.foto.url }}" alt="{{ astronauta.nome }}" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin-bottom: 15px;">
+                    {% else %}
+                        <div style="width: 100px; height: 100px; background: linear-gradient(135deg, #6c63ff, #5048c8); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px;">
+                            <span style="font-size: 2rem;">👨‍🚀</span>
+                        </div>
+                    {% endif %}
+                    <h4>{{ astronauta.nome }}</h4>
+                    <p class="text-muted">{{ astronauta.nacionalidade }}</p>
+                    <p>
+                        <span class="badge {% if astronauta.esta_vivo %}bg-success{% else %}bg-secondary{% endif %}">
+                            {{ astronauta.get_status_display }}
+                        </span>
+                    </p>
+                    <a href="{% url 'detalhes_astronauta' astronauta.pk %}" class="btn btn-sm btn-outline-primary mt-2">Ver Perfil</a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Ações do Admin -->
+        {% if user.is_superuser %}
+        <div class="detalhes-actions mt-4 pt-4 border-top">
+            <a href="{% url 'editar_missao' missao.pk %}" class="btn btn-warning">
+                Editar Missão
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- CSRF Token para exclusão -->
+<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/confirmacao-exclusao.js' %}"></script>
+{% endblock %}

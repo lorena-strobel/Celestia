@@ -1,0 +1,153 @@
+<!-- templates/corpos_celestes/planetas/detalhes_planeta.html -->
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ planeta.nome }} - Detalhes do Planeta{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/detalhes.css' %}">
+<style>
+    body.detalhes-page {
+        background: linear-gradient(rgba(20, 30, 48, 0.9), rgba(36, 59, 85, 0.9)),
+                    url('/static/images/planets-bg.jpg');
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- Botão Voltar -->
+    <div class="mb-4">
+        <a href="{% url 'listar_planetas' %}" class="btn btn-outline-primary">
+            ← Voltar para Planetas
+        </a>
+    </div>
+
+    <!-- Card Principal de Detalhes -->
+    <div class="detalhes-card">
+        <div class="row">
+            <!-- Coluna da Imagem -->
+            <div class="col-md-6">
+                {% if planeta.imagem %}
+                    <img src="{{ planeta.imagem.url }}" alt="{{ planeta.nome }}" class="detalhes-imagem">
+                {% else %}
+                    <div class="sem-imagem">
+                        <div class="sem-imagem-icon">🪐</div>
+                        <p>Imagem não disponível</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Coluna das Informações -->
+            <div class="col-md-6">
+                <div class="detalhes-content">
+                    <h1 class="detalhes-titulo">{{ planeta.nome }}</h1>
+                    
+                    <!-- Badges -->
+                    <div class="badges-container mb-4">
+                        <span class="badge classificacao-badge">
+                            {{ planeta.get_tipo_display }}
+                        </span>
+                        {% if planeta.sistema_planetario %}
+                        <span class="badge estagio-badge">
+                            {{ planeta.sistema_planetario.nome }}
+                        </span>
+                        {% endif %}
+                    </div>
+
+                    <!-- Informações Principais -->
+                    <div class="informacoes-grid">
+                        <div class="info-item">
+                            <div class="info-label">Diâmetro</div>
+                            <div class="info-value">{{ planeta.diametro|floatformat:2 }} km</div>
+                        </div>
+
+                        {% if planeta.massa %}
+                        <div class="info-item">
+                            <div class="info-label">Massa</div>
+                            <div class="info-value">{{ planeta.massa|floatformat:2 }} massas terrestres</div>
+                        </div>
+                        {% endif %}
+
+                        {% if planeta.temperatura_media %}
+                        <div class="info-item">
+                            <div class="info-label">Temperatura Média</div>
+                            <div class="info-value">{{ planeta.temperatura_media }} K</div>
+                        </div>
+                        {% endif %}
+
+                        {% if planeta.periodo_orbital %}
+                        <div class="info-item">
+                            <div class="info-label">Período Orbital</div>
+                            <div class="info-value">{{ planeta.periodo_orbital|floatformat:2 }} dias</div>
+                        </div>
+                        {% endif %}
+
+                        <div class="info-item">
+                            <div class="info-label">Possui Água</div>
+                            <div class="info-value">
+                                {% if planeta.possui_agua %}
+                                    <span class="text-success">Sim</span>
+                                {% else %}
+                                    <span class="text-danger">Não</span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="info-item">
+                            <div class="info-label">Possui Atmosfera</div>
+                            <div class="info-value">
+                                {% if planeta.possui_atmosfera %}
+                                    <span class="text-success">Sim</span>
+                                {% else %}
+                                    <span class="text-danger">Não</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if planeta.descricao %}
+        <div class="descricao-section mt-5">
+            <h3 class="descricao-titulo">Sobre: {{ planeta.nome }}</h3>
+            <div class="descricao-content">
+                {{ planeta.descricao|linebreaks }}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Satélites Naturais -->
+        {% if satelites %}
+        <div class="informacoes-adicionais mt-5">
+            <h3 class="info-adicional-titulo">Satélites Naturais ({{ satelites.count }})</h3>
+            <div class="row mt-4">
+                {% for satelite in satelites %}
+                <div class="col-md-6 mb-3">
+                    <div class="info-item">
+                        <div class="info-label">{{ satelite.nome }}</div>
+                        <div class="info-value">{{ satelite.diametro|floatformat:2 }} km</div>
+                        {% if satelite.massa %}
+                        <div class="info-desc">Massa: {{ satelite.massa|floatformat:2 }} kg</div>
+                        {% endif %}
+                        {% if satelite.descricao %}
+                        <div class="info-desc mt-2">{{ satelite.descricao|truncatewords:30 }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Ações do Admin -->
+        {% if user.is_superuser %}
+        <div class="detalhes-actions mt-4 pt-4 border-top">
+            <a href="{% url 'editar_planeta' planeta.id %}" class="btn btn-warning">
+                Editar Planeta
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

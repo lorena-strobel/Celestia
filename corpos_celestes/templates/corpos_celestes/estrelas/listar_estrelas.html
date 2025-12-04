@@ -1,0 +1,291 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Estrelas{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/listagens.css' %}">
+<style>
+    .hero-header {
+        background: linear-gradient(135deg, rgba(10, 10, 50, 0.55) 0%, rgba(30, 30, 80, 0.95) 100%), 
+        url('/static/images/stars2.jpg') center/cover no-repeat;
+    }
+</style>
+{% endblock %}
+
+{% block hero %}
+<div class="hero-header">
+    <div class="hero-wrapper">
+        <div class="hero-content">
+            <div class="btn-voltar-container">
+                <a href="{% url 'visualizarCorposCelestes' %}" class="btn-voltar">
+                    ← Voltar para Catálogo
+                </a>
+            </div>
+            <h1 class="display-1 fw-bold">Estrelas</h1>
+            <p class="lead">
+               Gigantescas bolas de gás quente – principalmente hidrogênio, com um pouco de hélio e pequenas quantidades de outros elementos. Cada estrela tem seu próprio ciclo de vida, que varia de alguns milhões a trilhões de anos, e suas propriedades mudam à medida que envelhece.
+            </p>
+            <p>Explore o catálogo de estrelas do site</p>
+        </div>
+
+        <div class="hero-stats">
+            <div class="stat-item">
+                <h3>{{ total_estrelas }}</h3>
+                <p>Estrelas Catalogadas</p>
+            </div>
+
+            <div class="stat-item">
+                <h3>{{ espectrais|length }}</h3>
+                <p>Classificações Espectrais</p>
+            </div>
+
+            <div class="stat-item">
+                <h3>{{ estagios|length }}</h3>
+                <p>Estágios Evolutivos</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container estrelas-container">
+
+    <!-- Formulário de Busca e Filtros -->
+    <form method="GET" class="search-filters-form mb-4">
+        
+        <!-- Barra de busca principal -->
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="input-group">
+                    <input 
+                        type="text" 
+                        name="busca" 
+                        class="form-control"
+                        placeholder="Buscar por nome, sistema ou classificação..."
+                        value="{{ busca }}"
+                    >
+                    <button type="submit" class="btn btn-primary">Buscar</button>
+                </div>
+            </div>
+            
+            <!-- Ordenação -->
+            <div class="col-md-3">
+                <select name="ordenar" class="form-select" onchange="this.form.submit()">
+                    <option value="nome" {% if ordenar == "nome" %}selected{% endif %}>Ordenar por Nome</option>
+                    <option value="classificacao_espectral" {% if ordenar == "classificacao_espectral" %}selected{% endif %}>Ordenar por Espectro</option>
+                    <option value="estagio_evolutivo" {% if ordenar == "estagio_evolutivo" %}selected{% endif %}>Ordenar por Estágio</option>
+                    <option value="massa" {% if ordenar == "massa" %}selected{% endif %}>Ordenar por Massa</option>
+                    <option value="temperatura" {% if ordenar == "temperatura" %}selected{% endif %}>Ordenar por Temperatura</option>
+                </select>
+            </div>
+
+            <!-- Botão Limpar -->
+            <div class="col-md-3 d-flex align-items-center">
+                <a href="{% url 'listar_estrelas' %}" class="btn btn-secondary w-100">Limpar Filtros</a>
+            </div>
+        </div>
+
+        <!-- Filtros Avançados -->
+        <div class="row mb-3">
+            <div class="col-md-12">
+                <h5 class="text-white mb-3">Filtros Avançados:</h5>
+                
+                <div class="row">
+                    <!-- Filtro Classificação Espectral -->
+                    <div class="col-md-4">
+                        <label class="form-label text-white">Classificação Espectral</label>
+                        <select name="classificacao" class="form-select">
+                            <option value="">Todas as classificações</option>
+                            {% for codigo, nome in espectrais %}
+                                <option value="{{ codigo }}" {% if filtros.classificacao == codigo %}selected{% endif %}>
+                                    {{ codigo }} - {{ nome }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Filtro Estágio Evolutivo -->
+                    <div class="col-md-4">
+                        <label class="form-label text-white">Estágio Evolutivo</label>
+                        <select name="estagio" class="form-select">
+                            <option value="">Todos os estágios</option>
+                            {% for codigo, nome in estagios %}
+                                <option value="{{ codigo }}" {% if filtros.estagio == codigo %}selected{% endif %}>
+                                    {{ nome }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Filtro Sistema Planetário -->
+                    <div class="col-md-4">
+                        <label class="form-label text-white">Sistema Planetário</label>
+                        <select name="sistema" class="form-select">
+                            <option value="">Todos os sistemas</option>
+                            {% for sistema in sistemas %}
+                                <option value="{{ sistema.id }}" {% if filtros.sistema == sistema.id|stringformat:"s" %}selected{% endif %}>
+                                    {{ sistema.nome }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botão Aplicar Filtros -->
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <button type="submit" class="btn btn-primary btn-lg">Aplicar Filtros</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Informações sobre os filtros ativos -->
+    {% if busca or filtros.classificacao or filtros.estagio or filtros.sistema %}
+    <div class="alert alert-info">
+        <strong>Filtros ativos:</strong>
+        {% if busca %}Busca: "{{ busca }}"{% endif %}
+        {% if filtros.classificacao %} | Espectro: 
+            {% for codigo, nome in espectrais %}
+                {% if codigo == filtros.classificacao %}{{ nome }}{% endif %}
+            {% endfor %}
+        {% endif %}
+        {% if filtros.estagio %} | Estágio: 
+            {% for codigo, nome in estagios %}
+                {% if codigo == filtros.estagio %}{{ nome }}{% endif %}
+            {% endfor %}
+        {% endif %}
+        {% if filtros.sistema %} | Sistema: 
+            {% for sistema in sistemas %}
+                {% if sistema.id|stringformat:"s" == filtros.sistema %}{{ sistema.nome }}{% endif %}
+            {% endfor %}
+        {% endif %}
+        <a href="{% url 'listar_estrelas' %}" class="float-end text-decoration-none">× Limpar todos</a>
+    </div>
+    {% endif %}
+
+    <!-- Botão de adicionar -->
+    {% if user.is_superuser %}
+    <div class="actions mb-3">
+        <a href="{% url 'criar_estrela' %}" class="btn btn-success">
+            Adicionar Estrela
+        </a>
+    </div>
+    {% endif %}
+
+    <!-- Contador de resultados -->
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <p class="text-white">
+                {% if busca or filtros.classificacao or filtros.estagio or filtros.sistema %}
+                Mostrando <strong>{{ estrelas_filtradas_count }}</strong> estrela{{ estrelas_filtradas_count|pluralize }} encontrada{{ estrelas_filtradas |pluralize }} (de {{total_estrelas}} no total)
+                {% else %}
+                Total de <strong>{{ total_estrelas }}</strong> estrela, {{ total_estrelas }} no catálogo
+                {% endif %}
+            </p>
+        </div>
+    </div>
+
+    <!-- Grid de cards -->
+    <div class="cards-grid">
+        {% for estrela in estrelas %}
+            <div class="card card-clickable">  
+                <div class="card-body text-center">
+                    <a href="{% url 'detalhes_estrela' estrela.id %}" class="card-link">
+                        <h3 class="card-title">{{ estrela.nome }}</h3>
+                        {% if estrela.imagem %}
+                            <img src="{{ estrela.imagem.url }}" alt="{{ estrela.nome }}" class="card-img">
+                        {% else %}
+                            <div class="card-img-placeholder">
+                                <span>Sem imagem</span>
+                            </div>
+                        {% endif %}                
+                        <div class="card-info">
+                            <p class="mb-2">
+                                <span class="badge bg-primary">{{ estrela.get_classificacao_espectral_display|default:"—" }}</span>
+                                <span class="badge bg-info">{{ estrela.get_estagio_evolutivo_display }}</span>
+                            </p>
+                            <p>
+                                {{ estrela.massa }} massas solares
+                            </p>
+                        </div>
+                    </a>
+
+                    {% if user.is_superuser %}
+                    <div class="card-actions mt-3">
+                        <a href="{% url 'editar_estrela' estrela.id %}" class="btn btn-outline-warning btn-sm">
+                        Editar
+                        </a>
+                        <button class="btn btn-outline-danger btn-sm btn-excluir"
+                        data-url="{% url 'deletar_estrela' estrela.id %}"
+                        data-nome="{{ estrela.nome }}"
+                        data-tipo="estrela">
+                        Excluir
+                        </button>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+        {% empty %}
+            <div class="empty-state text-center" style="grid-column: 1 / -1;">
+                <h3>
+                    {% if busca %}
+                    "{{ busca }}" não encontrada no catálogo
+                    {% else %}
+                    Nenhuma estrela encontrada
+                    {% endif %}
+                </h3>
+                <p>
+                    {% if busca %}
+                    Tente verificar a ortografia ou usar termos diferentes.<br>
+                    {% else %}
+                    Tente ajustar os filtros de busca.
+                    {% endif %}
+                </p>
+                <div class="mt-4">
+                    <a href="{% url 'listar_estrelas' %}" class="btn btn-primary me-2">Ver Todas as Estrelas</a>
+                    {% if user.is_superuser %}
+                    <a href="{% url 'criar_estrela' %}" class="btn btn-success">Adicionar Nova Estrela</a>
+                    {% endif %}
+                </div>
+                
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Paginação -->
+    {% if estrelas.has_other_pages %}
+    <nav aria-label="Paginação" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if estrelas.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?pagina={{ estrelas.previous_page_number }}{% if request.GET.urlencode %}&{{ request.GET.urlencode }}{% endif %}">Anterior</a>
+                </li>
+            {% endif %}
+
+            {% for num in estrelas.paginator.page_range %}
+                {% if estrelas.number == num %}
+                    <li class="page-item active">
+                        <span class="page-link">{{ num }}</span>
+                    </li>
+                {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="?pagina={{ num }}{% if request.GET.urlencode %}&{{ request.GET.urlencode }}{% endif %}">{{ num }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if estrelas.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?pagina={{ estrelas.next_page_number }}{% if request.GET.urlencode %}&{{ request.GET.urlencode }}{% endif %}">Próxima</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}

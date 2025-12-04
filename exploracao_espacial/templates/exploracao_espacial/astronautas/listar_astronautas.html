@@ -1,0 +1,316 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Astronautas{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/listagens.css' %}">
+<style>
+    .hero-header {
+        background: linear-gradient(135deg, rgba(10, 10, 50, 0.55) 0%, rgba(30, 30, 80, 0.95) 100%), 
+        url('/static/images/astrronautaespaco.jpg') center/cover no-repeat;
+    }
+    /* CSS específico para astronautas */
+    .astronauta-photo {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #0d6efd;
+        margin-bottom: 15px;
+    }
+    .astronauta-photo-placeholder {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #6c757d, #495057);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 2rem;
+        margin-bottom: 15px;
+    }
+</style>
+{% endblock %}
+
+{% block hero %}
+<div class="hero-header">
+    <div class="hero-wrapper">
+        <div class="hero-content">
+            <div class="btn-voltar-container">
+                <a href="{% url 'visualizarExploracao' %}" class="btn-voltar">
+                    ← Voltar para Catálogo
+                </a>
+            </div>
+            <h1 class="display-1 fw-bold">Astronautas</h1>
+            <p class="lead">
+                Conheça os heróis que desafiaram a gravidade e expandiram os limites da humanidade no espaço.
+            </p>
+            <p>Explore o catálogo de astronautas do site</p>
+        </div>
+        
+        <div class="hero-stats">
+            <div class="stat-item">
+                <h3>{{ total_astronautas }}</h3>
+                <p>Astronautas Catalogados</p>
+            </div>
+
+            <div class="stat-item">
+                <h3>{{ nacionalidades|length }}</h3>
+                <p>Nacionalidades</p>
+            </div>
+
+            <div class="stat-item">
+                <h3>{{ astronautas.paginator.count }}</h3>
+                <p>Resultados Encontrados</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container astronautas-container">
+
+    <!-- Formulário de Busca e Filtros -->
+    <form method="GET" class="search-filters-form mb-4">
+        
+        <!-- Barra de busca principal -->
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="input-group">
+                    <input 
+                        type="text" 
+                        name="busca" 
+                        class="form-control"
+                        placeholder="Buscar por nome, nacionalidade ou biografia..."
+                        value="{{ busca }}"
+                    >
+                    <button type="submit" class="btn btn-primary">Buscar</button>
+                </div>
+            </div>
+            
+            <!-- Ordenação -->
+            <div class="col-md-3">
+                <select name="ordenar" class="form-select" onchange="this.form.submit()">
+                    <option value="nome" {% if ordenar == "nome" %}selected{% endif %}>Ordenar por Nome</option>
+                    <option value="data_nascimento" {% if ordenar == "data_nascimento" %}selected{% endif %}>Ordenar por Nascimento</option>
+                    <option value="nacionalidade" {% if ordenar == "nacionalidade" %}selected{% endif %}>Ordenar por Nacionalidade</option>
+                    <option value="status" {% if ordenar == "status" %}selected{% endif %}>Ordenar por Status</option>
+                </select>
+            </div>
+
+            <!-- Botão Limpar -->
+            <div class="col-md-3 d-flex align-items-center">
+                <a href="{% url 'listar_astronautas' %}" class="btn btn-secondary w-100">Limpar Filtros</a>
+            </div>
+        </div>
+
+        <!-- Filtros Avançados -->
+        <div class="row mb-3">
+            <div class="col-md-12">
+                <h5 class="text-white mb-3">Filtros Avançados:</h5>
+                
+                <div class="row">
+                    <!-- Filtro Status -->
+                    <div class="col-md-4">
+                        <label class="form-label text-white">Status Profissional</label>
+                        <select name="status" class="form-select">
+                            <option value="">Todos os status</option>
+                            {% for codigo, nome in status_choices %}
+                                <option value="{{ codigo }}" {% if filtros.status == codigo %}selected{% endif %}>
+                                    {{ nome }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Filtro Nacionalidade -->
+                    <div class="col-md-4">
+                        <label class="form-label text-white">Nacionalidade</label>
+                        <select name="nacionalidade" class="form-select">
+                            <option value="">Todas as nacionalidades</option>
+                            {% for nacionalidade in nacionalidades %}
+                                <option value="{{ nacionalidade }}" {% if filtros.nacionalidade == nacionalidade %}selected{% endif %}>
+                                    {{ nacionalidade }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Filtro Gênero -->
+                    <div class="col-md-4">
+                        <label class="form-label text-white">Gênero</label>
+                        <select name="genero" class="form-select">
+                            <option value="">Todos</option>
+                            {% for codigo, nome in genero_choices %}
+                                <option value="{{ codigo }}" {% if filtros.genero == codigo %}selected{% endif %}>
+                                    {{ nome }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botão Aplicar Filtros -->
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <button type="submit" class="btn btn-primary btn-lg">Aplicar Filtros</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Informações sobre os filtros ativos -->
+    {% if busca or filtros.status or filtros.nacionalidade or filtros.genero %}
+    <div class="alert alert-info">
+        <strong>Filtros ativos:</strong>
+        {% if busca %}Busca: "{{ busca }}"{% endif %}
+        {% if filtros.status %} | Status: 
+            {% for codigo, nome in status_choices %}
+                {% if codigo == filtros.status %}{{ nome }}{% endif %}
+            {% endfor %}
+        {% endif %}
+        {% if filtros.nacionalidade %} | Nacionalidade: {{ filtros.nacionalidade }}{% endif %}
+        {% if filtros.genero %} | Gênero: 
+            {% for codigo, nome in genero_choices %}
+                {% if codigo == filtros.genero %}{{ nome }}{% endif %}
+            {% endfor %}
+        {% endif %}
+        <a href="{% url 'listar_astronautas' %}" class="float-end text-decoration-none">× Limpar todos</a>
+    </div>
+    {% endif %}
+    
+    <!-- Botão de adicionar -->
+    {% if user.is_superuser %}
+    <div class="actions mb-3">
+        <a href="{% url 'criar_astronauta' %}" class="btn btn-success">
+            Adicionar Astronauta
+        </a>
+    </div>
+    {% endif %}
+
+    <!-- Contador de resultados -->
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <p class="text-white">
+                {% if busca or filtros.status or filtros.nacionalidade or filtros.genero %}
+                Mostrando <strong>{{ astronautas.paginator.count }}</strong> astronauta{{ astronautas.paginator.count|pluralize }} encontrado{{ astronautas.paginator.count|pluralize }}
+                {% else %}
+                Total de <strong>{{ astronautas.paginator.count }}</strong> astronauta{{ astronautas.paginator.count|pluralize }} no catálogo
+                {% endif %}
+            </p>
+        </div>
+    </div>
+
+    <!-- Grid de cards -->
+    <div class="cards-grid">
+        {% for astronauta in astronautas %}
+            <div class="card card-clickable">  
+                <div class="card-body text-center">
+                    <a href="{% url 'detalhes_astronauta' astronauta.id %}" class="card-link">
+                        <!-- Foto do astronauta -->
+                        {% if astronauta.foto %}
+                            <img src="{{ astronauta.foto.url }}" alt="{{ astronauta.nome }}" class="astronauta-photo">
+                        {% else %}
+                            <div class="astronauta-photo-placeholder">
+                                👨🚀
+                            </div>
+                        {% endif %}
+                        
+                        <h3 class="card-title">{{ astronauta.nome }}</h3>
+                        
+                        <div class="card-info">
+                            <p class="mb-2">
+                                <span class="badge bg-primary">{{ astronauta.nacionalidade }}</span>
+                                <span class="badge bg-{% if astronauta.status == 'ativo' %}success{% elif astronauta.status == 'aposentado' %}warning{% else %}secondary{% endif %}">
+                                    {{ astronauta.get_status_display }}
+                                </span>
+                            </p>
+                            
+                            <p class="mb-1">
+                                <small>{{ astronauta.data_nascimento|date:"d/m/Y" }} ({{ astronauta.idade }} anos)</small>
+                            </p>
+                            
+                            <p class="mb-0">
+                                <small>{{ astronauta.total_missoes }} missão{{ astronauta.total_missoes|pluralize:"ões" }}</small>
+                            </p>
+                        </div>
+                    </a>
+
+                    {% if user.is_superuser %}
+                    <div class="card-actions mt-3">
+                        <a href="{% url 'editar_astronauta' astronauta.id %}" class="btn btn-outline-warning btn-sm">
+                            Editar
+                        </a>
+                        <button class="btn btn-outline-danger btn-sm btn-excluir"
+                        data-url="{% url 'excluir_astronauta' astronauta.id %}"
+                        data-nome="{{ astronauta.nome }}"
+                        data-tipo="astronauta">
+                            Excluir
+                        </button>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+        {% empty %}
+            <div class="empty-state text-center" style="grid-column: 1 / -1;">
+                <h3 class="text-white">
+                    {% if busca %}
+                    "{{ busca }}" não encontrado no catálogo
+                    {% else %}
+                    Nenhum astronauta encontrado
+                    {% endif %}
+                </h3>
+                <p class="text-white-50">
+                    {% if busca %}
+                    Tente verificar a ortografia ou usar termos diferentes.<br>
+                    {% else %}
+                    Tente ajustar os filtros de busca.
+                    {% endif %}
+                </p>
+                <div class="mt-4">
+                    <a href="{% url 'listar_astronautas' %}" class="btn btn-primary me-2">Ver Todos os Astronautas</a>
+                    {% if user.is_superuser %}
+                    <a href="{% url 'criar_astronauta' %}" class="btn btn-success">Adicionar Novo Astronauta</a>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Paginação -->
+    {% if astronautas.has_other_pages %}
+    <nav aria-label="Paginação" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if astronautas.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?pagina={{ astronautas.previous_page_number }}{% if request.GET.urlencode %}&{{ request.GET.urlencode }}{% endif %}">Anterior</a>
+                </li>
+            {% endif %}
+
+            {% for num in astronautas.paginator.page_range %}
+                {% if astronautas.number == num %}
+                    <li class="page-item active">
+                        <span class="page-link">{{ num }}</span>
+                    </li>
+                {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="?pagina={{ num }}{% if request.GET.urlencode %}&{{ request.GET.urlencode }}{% endif %}">{{ num }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if astronautas.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?pagina={{ astronautas.next_page_number }}{% if request.GET.urlencode %}&{{ request.GET.urlencode }}{% endif %}">Próxima</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}

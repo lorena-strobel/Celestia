@@ -1,0 +1,80 @@
+.form-container {
+        background: rgba(10, 10, 50, 0.9);
+        padding: 40px;
+        border-radius: 15px;
+        border: 1px solid #2a2a5a;
+        margin: 30px auto;
+        max-width: 900px;
+    }
+    .form-group {
+        margin-bottom: 25px;
+    }
+    .form-label {
+        color: #a3aaff;
+        font-weight: 600;
+        margin-bottom: 10px;
+        display: block;
+        font-size: 1rem;
+    }
+    .form-control, .form-select, .form-textarea {
+        background: rgba(20, 20, 60, 0.9);
+        border: 1px solid #3a3a7a;
+        color: white;
+        padding: 12px 15px;
+        border-radius: 8px;
+        width: 100%;
+        font-size: 1rem;
+    }
+    .form-control:focus, .form-select:focus, .form-textarea:focus {
+        background: rgba(25, 25, 70, 0.95);
+        border-color: #6c63ff;
+        color: white;
+        box-shadow: 0 0 0 0.3rem rgba(108, 99, 255, 0.25);
+        outline: none;
+    }
+    .help-text {
+        font-size: 0.8rem;
+        color: #6cb4ee;
+        margin-top: 6px;
+        font-style: italic;
+    }
+    .error-list {
+        color: #ff6b6b;
+        font-size: 0.85rem;
+        margin-top: 6px;
+        list-style: none;
+        padding: 0;
+    }
+    .error-list li {
+        background: rgba(255, 107, 107, 0.1);
+        padding: 5px 10px;
+        border-radius: 5px;
+        margin: 3px 0;
+    }
+    .form-actions {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid #2a2a5a;
+    }
+    .btn-form {
+        padding: 12px 30px;
+        font-size: 1.1rem;
+        border-radius: 8px;
+        min-width: 150px;
+    }
+    /* Estilo específico para textarea */
+    textarea.form-textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
+    /* Melhorar os selects */
+    .form-select {
+        cursor: pointer;
+    }
+    /* Placeholder color */
+    .form-control::placeholder {
+        color: #8a8ac4;
+    }

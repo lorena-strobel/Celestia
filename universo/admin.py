@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Galaxia, SistemaPlanetario
+from .models import Galaxia, SistemaPlanetario, Nebulosa
 
 # Register your models here.
 class GalaxiaAdmin(admin.ModelAdmin):
@@ -15,3 +15,10 @@ class SistemaPlanetarioAdmin(admin.ModelAdmin):
 
 admin.site.register(Galaxia, GalaxiaAdmin)
 admin.site.register(SistemaPlanetario, SistemaPlanetarioAdmin)
+
+class NebulosaAdmin(admin.ModelAdmin):
+    list_display = ['nome', 'tipo', 'distancia']
+    list_filter = ['tipo']
+    search_fields = ['nome', 'descricao']
+
+admin.site.register(Nebulosa, NebulosaAdmin)

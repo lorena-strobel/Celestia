@@ -1,0 +1,318 @@
+<!-- corpos_celestes/planetas/form.html -->
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ titulo }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/listagens.css' %}">
+<link rel="stylesheet" href="{% static 'css/form.css' %}">
+<style>
+    .hero-header {
+        background: linear-gradient(135deg, rgba(10, 10, 50, 0.55) 0%, rgba(30, 30, 80, 0.95) 100%), 
+        url('/static/images/planets.jpg') center/cover no-repeat;
+    }
+</style>
+{% endblock %}
+
+{% block hero %}
+<div class="hero-header">
+    <div class="hero-wrapper">
+        <div class="hero-content">
+            <div class="btn-voltar-container">
+                <a href="{% url 'listar_planetas' %}" class="btn-voltar">
+                    ← Voltar para Planetas
+                </a>
+            </div>
+            <h1 class="display-1 fw-bold">{{ titulo }}</h1>
+            <p class="lead">
+                {% if titulo == "Criar Planeta" %}
+                Adicione um novo planeta ao catálogo cósmico
+                {% else %}
+                Edite as informações do planeta existente
+                {% endif %}
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="form-container">
+        <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+                <strong>Erro!</strong> Por favor, corrija os erros abaixo.
+                {{ form.non_field_errors }}
+            </div>
+            {% endif %}
+            
+            <!-- Linha 1: Nome e Sistema -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label" for="{{ form.nome.id_for_label }}">
+                            {{ form.nome.label }}
+                        </label>
+                        <input type="text" 
+                               name="{{ form.nome.name }}" 
+                               id="{{ form.nome.id_for_label }}"
+                               class="form-control"
+                               value="{{ form.nome.value|default:'' }}"
+                               placeholder="Ex: Terra, Marte, Júpiter">
+                        {% if form.nome.help_text %}
+                            <div class="help-text">{{ form.nome.help_text }}</div>
+                        {% endif %}
+                        {% if form.nome.errors %}
+                            <ul class="error-list">
+                                {% for error in form.nome.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label" for="{{ form.sistema_planetario.id_for_label }}">
+                            {{ form.sistema_planetario.label }}
+                        </label>
+                        <select name="{{ form.sistema_planetario.name }}" 
+                                id="{{ form.sistema_planetario.id_for_label }}"
+                                class="form-select">
+                            <option value="">Selecione um sistema</option>
+                            {% for choice in form.sistema_planetario.field.choices %}
+                                <option value="{{ choice.0 }}" 
+                                    {% if form.sistema_planetario.value == choice.0 %}selected{% endif %}>
+                                    {{ choice.1 }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        {% if form.sistema_planetario.errors %}
+                            <ul class="error-list">
+                                {% for error in form.sistema_planetario.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Linha 2: Tipo, Diâmetro e Massa -->
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="form-label" for="{{ form.tipo.id_for_label }}">
+                            Tipo de Planeta
+                        </label>
+                        <select name="{{ form.tipo.name }}" 
+                                id="{{ form.tipo.id_for_label }}"
+                                class="form-select">
+                            <option value="">Selecione...</option>
+                            {% for choice in form.tipo.field.choices %}
+                                <option value="{{ choice.0 }}" 
+                                    {% if form.tipo.value == choice.0 %}selected{% endif %}>
+                                    {{ choice.1 }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        {% if form.tipo.errors %}
+                            <ul class="error-list">
+                                {% for error in form.tipo.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="form-label" for="{{ form.diametro.id_for_label }}">
+                            {{ form.diametro.label }}
+                        </label>
+                        <input type="number" 
+                               name="{{ form.diametro.name }}" 
+                               id="{{ form.diametro.id_for_label }}"
+                               class="form-control"
+                               value="{{ form.diametro.value|default:'' }}"
+                               step="0.1"
+                               min="500"
+                               placeholder="Ex: 12742">
+                        {% if form.diametro.help_text %}
+                            <div class="help-text">{{ form.diametro.help_text }}</div>
+                        {% endif %}
+                        {% if form.diametro.errors %}
+                            <ul class="error-list">
+                                {% for error in form.diametro.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="form-label" for="{{ form.massa.id_for_label }}">
+                            {{ form.massa.label }}
+                        </label>
+                        <input type="number" 
+                               name="{{ form.massa.name }}" 
+                               id="{{ form.massa.id_for_label }}"
+                               class="form-control"
+                               value="{{ form.massa.value|default:'' }}"
+                               step="0.001"
+                               min="0"
+                               placeholder="Ex: 1.0">
+                        {% if form.massa.help_text %}
+                            <div class="help-text">{{ form.massa.help_text }}</div>
+                        {% endif %}
+                        {% if form.massa.errors %}
+                            <ul class="error-list">
+                                {% for error in form.massa.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Linha 3: Temperatura e Período Orbital -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label" for="{{ form.temperatura_media.id_for_label }}">
+                            {{ form.temperatura_media.label }}
+                        </label>
+                        <input type="number" 
+                               name="{{ form.temperatura_media.name }}" 
+                               id="{{ form.temperatura_media.id_for_label }}"
+                               class="form-control"
+                               value="{{ form.temperatura_media.value|default:'' }}"
+                               min="0"
+                               placeholder="Ex: 288">
+                        {% if form.temperatura_media.help_text %}
+                            <div class="help-text">{{ form.temperatura_media.help_text }}</div>
+                        {% endif %}
+                        {% if form.temperatura_media.errors %}
+                            <ul class="error-list">
+                                {% for error in form.temperatura_media.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label" for="{{ form.periodo_orbital.id_for_label }}">
+                            {{ form.periodo_orbital.label }}
+                        </label>
+                        <input type="number" 
+                               name="{{ form.periodo_orbital.name }}" 
+                               id="{{ form.periodo_orbital.id_for_label }}"
+                               class="form-control"
+                               value="{{ form.periodo_orbital.value|default:'' }}"
+                               step="0.01"
+                               min="0"
+                               placeholder="Ex: 365.25">
+                        {% if form.periodo_orbital.help_text %}
+                            <div class="help-text">{{ form.periodo_orbital.help_text }}</div>
+                        {% endif %}
+                        {% if form.periodo_orbital.errors %}
+                            <ul class="error-list">
+                                {% for error in form.periodo_orbital.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Linha 4: Checkboxes e Imagem -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <div class="form-check">
+                            <input type="checkbox" 
+                                   name="{{ form.possui_agua.name }}" 
+                                   id="{{ form.possui_agua.id_for_label }}"
+                                   class="form-check-input"
+                                   {% if form.possui_agua.value %}checked{% endif %}>
+                            <label class="form-check-label" for="{{ form.possui_agua.id_for_label }}">
+                                {{ form.possui_agua.label }}
+                            </label>
+                        </div>
+                        
+                        <div class="form-check mt-2">
+                            <input type="checkbox" 
+                                   name="{{ form.possui_atmosfera.name }}" 
+                                   id="{{ form.possui_atmosfera.id_for_label }}"
+                                   class="form-check-input"
+                                   {% if form.possui_atmosfera.value %}checked{% endif %}>
+                            <label class="form-check-label" for="{{ form.possui_atmosfera.id_for_label }}">
+                                {{ form.possui_atmosfera.label }}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label" for="{{ form.imagem.id_for_label }}">
+                            {{ form.imagem.label }}
+                        </label>
+                        <input type="file" 
+                               name="{{ form.imagem.name }}" 
+                               id="{{ form.imagem.id_for_label }}"
+                               class="form-control"
+                               accept="image/*">
+                        {% if form.imagem.errors %}
+                            <ul class="error-list">
+                                {% for error in form.imagem.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Descrição -->
+            <div class="form-group">
+                <label class="form-label" for="{{ form.descricao.id_for_label }}">
+                    {{ form.descricao.label }}
+                </label>
+                <textarea name="{{ form.descricao.name }}" 
+                          id="{{ form.descricao.id_for_label }}"
+                          class="form-control form-textarea"
+                          placeholder="Descreva características do planeta, como composição, características únicas, etc.">{{ form.descricao.value|default:'' }}</textarea>
+                {% if form.descricao.errors %}
+                    <ul class="error-list">
+                        {% for error in form.descricao.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+            
+            <!-- Botões -->
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary btn-form">
+                    {% if titulo == "Criar Planeta" %} Criar Planeta{% else %} Salvar Alterações{% endif %}
+                </button>
+                <a href="{% url 'listar_planetas' %}" class="btn btn-secondary btn-form"> Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

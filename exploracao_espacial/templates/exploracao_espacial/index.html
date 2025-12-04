@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Exploração Espacial - Celestia{% endblock %}
+
+{% block extra_css %}
+<style>
+  .hero-header {
+    background:
+      linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.75)),
+      url("{% static 'images/missoespaciais.jpeg' %}") center/cover no-repeat;
+
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+  }
+</style>
+{% endblock %}
+
+{% block hero %} 
+<header class="hero-header text-light py-5">
+    <div class="container">
+        <h1 class="display-5 fw-bold">Catálogo de Explorações Espaciais</h1>
+        <p class="lead">
+          Missões históricas e astronautas que expandiram os limites da presença humana no cosmos
+        </p>
+    </div>
+</header>
+{% endblock %}
+
+
+{% block content %}
+
+<section class="row g-4">
+
+    <!-- MISSÕES ESPACIAIS -->
+    <div class="col-md-6">
+        <div class="card h-100 shadow-sm">
+            <img src="{% static 'images/mission.webp' %}" class="card-img-top card-img-fixed" alt="Missões Espaciais">
+            <div class="card-body text-center">
+                <h5 class="card-title">Missões Espaciais</h5>
+                <p class="card-text">
+                    Da órbita terrestre às profundezas do sistema solar: 
+                    as jornadas que redefiniram nosso lugar no universo.
+                </p>
+                
+                <a href="{% url 'listar_missoes' %}" class="btn btn-custom w-100">
+                  Explorar Missões
+                </a>
+
+                {% if user.is_staff %}
+                <small class="d-block mt-2">
+                    <a href="/admin/exploracao_espacial/missaoespacial/" class="text-muted">
+                      Gerenciar Missões
+                    </a>
+                </small>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- ASTRONAUTAS -->
+    <div class="col-md-6">
+        <div class="card h-100 shadow-sm">
+            <img src="{% static 'images/astronauts.jpg' %}" class="card-img-top card-img-fixed" alt="Astronautas">
+            <div class="card-body text-center">
+                <h5 class="card-title">Astronautas</h5>
+                <p class="card-text">
+                    Pioneiros que desafiaram a gravidade e escreveram 
+                    os capítulos mais ousados da aventura humana no espaço.
+                </p>
+
+                <a href="{% url 'listar_astronautas' %}" class="btn btn-custom w-100">
+                  Explorar Astronautas
+                </a>
+
+                {% if user.is_staff %}
+                <small class="d-block mt-2">
+                    <a href="/admin/exploracao_espacial/astronauta/" class="text-muted">
+                      Gerenciar Astronautas
+                    </a>
+                </small>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+</section>
+
+{% endblock %}

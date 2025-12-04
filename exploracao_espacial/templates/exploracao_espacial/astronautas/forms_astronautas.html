@@ -1,0 +1,333 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ titulo }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/listagens.css' %}">
+<link rel="stylesheet" href="{% static 'css/form.css' %}">
+<style>
+    .hero-header {
+        background: linear-gradient(135deg, rgba(10, 10, 50, 0.55) 0%, rgba(30, 30, 80, 0.95) 100%), 
+        url('/static/images/astrronautaespaco.jpg') center/cover no-repeat;
+    }
+    .photo-preview {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid #0d6efd;
+        margin: 0 auto 20px;
+        display: block;
+    }
+    .photo-placeholder {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #6c757d, #495057);
+        margin: 0 auto 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 3rem;
+    }
+</style>
+{% endblock %}
+
+{% block hero %}
+<div class="hero-header">
+    <div class="hero-wrapper">
+        <div class="hero-content">
+            <div class="btn-voltar-container">
+                <a href="{% url 'listar_astronautas' %}" class="btn-voltar">
+                    ← Voltar para Astronautas
+                </a>
+            </div>
+            <h1 class="display-1 fw-bold">{{ titulo }}</h1>
+            <p class="lead">
+                {% if titulo == "Registrar Astronauta" %}
+                Adicione um novo herói da exploração espacial
+                {% else %}
+                Atualize as informações do astronauta
+                {% endif %}
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="form-container">
+        <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+                <strong>Erro!</strong> Por favor, corrija os erros abaixo.
+                {{ form.non_field_errors }}
+            </div>
+            {% endif %}
+            
+            <!-- Preview da Foto -->
+            <div class="text-center mb-4">
+                {% if form.foto.value %}
+                    <img src="{{ form.foto.value.url }}" alt="Foto atual" class="photo-preview">
+                {% else %}
+                    <div class="photo-placeholder"></div>
+                {% endif %}
+            </div>
+            
+            <!-- Linha 1: Nome e Nacionalidade -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label" for="{{ form.nome.id_for_label }}">
+                            {{ form.nome.label }}
+                        </label>
+                        <input type="text" 
+                               name="{{ form.nome.name }}" 
+                               id="{{ form.nome.id_for_label }}"
+                               class="form-control"
+                               value="{{ form.nome.value|default:'' }}"
+                               placeholder="Ex: Neil Armstrong, Valentina Tereshkova">
+                        {% if form.nome.errors %}
+                            <ul class="error-list">
+                                {% for error in form.nome.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label" for="{{ form.nacionalidade.id_for_label }}">
+                            {{ form.nacionalidade.label }}
+                        </label>
+                        <input type="text" 
+                               name="{{ form.nacionalidade.name }}" 
+                               id="{{ form.nacionalidade.id_for_label }}"
+                               class="form-control"
+                               value="{{ form.nacionalidade.value|default:'' }}"
+                               placeholder="Ex: Americano, Russo, Brasileiro">
+                        {% if form.nacionalidade.errors %}
+                            <ul class="error-list">
+                                {% for error in form.nacionalidade.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Linha 2: Status e Gênero -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label" for="{{ form.status.id_for_label }}">
+                            Status Profissional
+                        </label>
+                        <select name="{{ form.status.name }}" 
+                                id="{{ form.status.id_for_label }}"
+                                class="form-select">
+                            <option value="">Selecione o status...</option>
+                            {% for choice in form.status.field.choices %}
+                                <option value="{{ choice.0 }}" 
+                                    {% if form.status.value == choice.0 %}selected{% endif %}>
+                                    {{ choice.1 }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        {% if form.status.errors %}
+                            <ul class="error-list">
+                                {% for error in form.status.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label" for="{{ form.genero.id_for_label }}">
+                            Gênero
+                        </label>
+                        <select name="{{ form.genero.name }}" 
+                                id="{{ form.genero.id_for_label }}"
+                                class="form-select">
+                            <option value="">Selecione...</option>
+                            {% for choice in form.genero.field.choices %}
+                                <option value="{{ choice.0 }}" 
+                                    {% if form.genero.value == choice.0 %}selected{% endif %}>
+                                    {{ choice.1 }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        {% if form.genero.errors %}
+                            <ul class="error-list">
+                                {% for error in form.genero.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Linha 3: Datas de Nascimento e Falecimento -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label" for="{{ form.data_nascimento.id_for_label }}">
+                            {{ form.data_nascimento.label }}
+                        </label>
+                        <input type="date" 
+                               name="{{ form.data_nascimento.name }}" 
+                               id="{{ form.data_nascimento.id_for_label }}"
+                               class="form-control"
+                               value="{{ form.data_nascimento.value|default:''|date:'Y-m-d' }}">
+                        {% if form.data_nascimento.errors %}
+                            <ul class="error-list">
+                                {% for error in form.data_nascimento.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label" for="{{ form.data_falecimento.id_for_label }}">
+                            {{ form.data_falecimento.label }} <span class="text-muted">(Opcional)</span>
+                        </label>
+                        <input type="date" 
+                               name="{{ form.data_falecimento.name }}" 
+                               id="{{ form.data_falecimento.id_for_label }}"
+                               class="form-control"
+                               value="{{ form.data_falecimento.value|default:''|date:'Y-m-d' }}">
+                        <div class="help-text">Deixe em branco para astronautas vivos</div>
+                        {% if form.data_falecimento.errors %}
+                            <ul class="error-list">
+                                {% for error in form.data_falecimento.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Linha 4: Foto e Missões -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label" for="{{ form.foto.id_for_label }}">
+                            {{ form.foto.label }} <span class="text-muted">(Opcional)</span>
+                        </label>
+                        <input type="file" 
+                               name="{{ form.foto.name }}" 
+                               id="{{ form.foto.id_for_label }}"
+                               class="form-control"
+                               accept="image/*"
+                               onchange="previewPhoto(event)">
+                        {% if form.foto.errors %}
+                            <ul class="error-list">
+                                {% for error in form.foto.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label" for="{{ form.missoes.id_for_label }}">
+                            Missões Participadas <span class="text-muted">(Opcional)</span>
+                        </label>
+                        <select name="{{ form.missoes.name }}" 
+                                id="{{ form.missoes.id_for_label }}"
+                                class="form-select"
+                                multiple
+                                size="4">
+                            {% for choice in form.missoes.field.choices %}
+                                <option value="{{ choice.0 }}" 
+                                    {% if choice.0 in form.missoes.value %}selected{% endif %}>
+                                    {{ choice.1 }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <div class="help-text">Segure Ctrl (Cmd no Mac) para selecionar múltiplas missões</div>
+                        {% if form.missoes.errors %}
+                            <ul class="error-list">
+                                {% for error in form.missoes.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Biografia -->
+            <div class="form-group">
+                <label class="form-label" for="{{ form.biografia.id_for_label }}">
+                    {{ form.biografia.label }}
+                </label>
+                <textarea name="{{ form.biografia.name }}" 
+                          id="{{ form.biografia.id_for_label }}"
+                          class="form-control form-textarea"
+                          rows="6"
+                          placeholder="Descreva a trajetória, conquistas e contribuições do astronauta...">{{ form.biografia.value|default:'' }}</textarea>
+                {% if form.biografia.errors %}
+                    <ul class="error-list">
+                        {% for error in form.biografia.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+            
+            <!-- Botões -->
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary btn-form">
+                    {% if titulo == "Registrar Astronauta" %} Registrar Astronauta{% else %} Salvar Alterações{% endif %}
+                </button>
+                <a href="{% url 'listar_astronautas' %}" class="btn btn-secondary btn-form"> Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Script para preview da foto -->
+<script>
+function previewPhoto(event) {
+    const input = event.target;
+    const reader = new FileReader();
+    
+    reader.onload = function() {
+        const preview = document.querySelector('.photo-preview') || document.querySelector('.photo-placeholder');
+        if (preview.classList.contains('photo-placeholder')) {
+            preview.classList.remove('photo-placeholder');
+            preview.classList.add('photo-preview');
+            preview.innerHTML = '';
+            preview.style.backgroundImage = `url(${reader.result})`;
+            preview.style.backgroundSize = 'cover';
+            preview.style.backgroundPosition = 'center';
+        } else {
+            preview.src = reader.result;
+        }
+    };
+    
+    if (input.files && input.files[0]) {
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+</script>
+{% endblock %}

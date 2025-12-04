@@ -1,0 +1,312 @@
+/* ===== ESTILOS PADRÃO PARA PÁGINAS DE LISTAGEM ===== */
+
+/* Container Principal */
+.estrelas-container,
+.planetas-container,
+.satelites-container,
+.missoes-container,
+.astronautas-container,
+.galaxias-container,
+.nebulosas-container,
+.sistemas-planetarios {
+    max-width: 1200px;
+}
+.btn-voltar {
+    color: white;
+    padding: 10px 20px;
+    border-radius: 25px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+}
+
+.btn-voltar:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.5);
+    color: white;
+    transform: translateX(-5px);
+}
+
+.btn-voltar-container {
+    margin-bottom: 20px;
+}
+
+/* Para usar dentro do hero */
+.hero-content .btn-voltar-container {
+    margin-bottom: 30px;
+}
+
+/* Hero Header Padrão */
+.hero-header {
+    height: 70vh;
+    display: flex;
+    align-items: center;
+    color: white;
+    padding: 0 80px;
+}
+
+.hero-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.hero-content {
+    max-width: 600px;
+    text-align: left;
+}
+
+.hero-stats {
+    display: flex;
+    gap: 40px;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 0 2rem;
+}
+
+.stat-item h3 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    color: #6c63ff;
+}
+
+.stat-item p {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    margin: 0;
+}
+
+/* Formulário de Busca e Filtros */
+.search-filters-form {
+    background: rgba(10, 10, 50, 0.6);
+    padding: 25px;
+    border-radius: 15px;
+    border: 1px solid #2a2a5a;
+    margin-top: -50px;
+    position: relative;
+    z-index: 10;
+    backdrop-filter: blur(10px);
+}
+
+/* Grid de Cards */
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 25px;
+    margin-top: 30px;
+}
+
+.card {
+    background: rgba(10, 10, 50, 0.9);
+    border: 1px solid #2a2a5a;
+    border-radius: 15px;
+    padding: 20px;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+}
+
+.card-clickable {
+    cursor: pointer;
+}
+
+.card-clickable:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 10px 30px rgba(108, 99, 255, 0.4);
+    border-color: #6c63ff;
+}
+
+.card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.card-link:hover {
+    text-decoration: none;
+    color: inherit;
+}
+
+.card-img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin: 15px 0;
+}
+
+.card-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.empty-state {
+    padding: 60px 40px;
+    color: #a3aaff;
+    text-align: center;
+    background: rgba(10, 10, 50, 0.6);
+    border-radius: 15px;
+    border: 1px solid #2a2a5a;
+    margin: 20px 0;
+}
+
+.card-img-placeholder {
+    height: 220px;
+    background: linear-gradient(45deg, rgba(108, 99, 255, 0.1), rgba(163, 170, 255, 0.1));
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+    color: #a3aaff;
+    margin: 15px 0;
+    font-size: 3rem;
+    border: 2px dashed #2a2a5a;
+}
+
+.card-info p {
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+    color: rgba(231, 205, 255, 0.87);
+}
+
+.badge {
+    font-size: 0.75em;
+    padding: 0.4em 0.8em;
+}
+
+/* Estilos específicos para planetas */
+.planet-features {
+    margin-top: 10px;
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.feature-badge {
+    font-size: 0.7rem;
+    padding: 3px 8px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.feature-badge.agua {
+    background: rgba(0, 150, 255, 0.3);
+    color: #6cb4ee;
+}
+
+.feature-badge.atmosfera {
+    background: rgba(200, 200, 200, 0.3);
+    color: #cccccc;
+}
+
+/* Paginação */
+.pagination .page-link {
+    background-color: rgba(10, 10, 50, 0.8);
+    border-color: #2a2a5a;
+    color: #a3aaff;
+    margin: 0 3px;
+    border-radius: 8px;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #6c63ff;
+    border-color: #6c63ff;
+}
+
+.pagination .page-link:hover {
+    background-color: #5048c8;
+    border-color: #5048c8;
+    color: white;
+}
+
+/* Modal */
+.modal-content {
+    background: linear-gradient(135deg, #4f46e5, #0ea5e9);
+    color: white;
+    border-radius: 14px;
+    border: none;
+}
+
+.modal-footer,
+.modal-header {
+    border: none;
+}
+
+.modal-title {
+    color: #ffffff;
+}
+
+.btn-close {
+    filter: invert(1);
+}
+
+/* Alertas */
+.alert-info {
+    background: rgba(23, 162, 184, 0.2);
+    border: 1px solid #17a2b8;
+    color: #a3eafc;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .hero-content h1 {
+        font-size: 2.5rem;
+    }
+
+    .hero-content .lead {
+        font-size: 1.1rem;
+    }
+
+    .search-filters-form {
+        margin-top: -30px;
+        padding: 20px;
+    }
+
+    .cards-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .stat-item {
+        padding: 0 1rem;
+    }
+
+    .stat-item h3 {
+        font-size: 2rem;
+    }
+
+    .hero-wrapper {
+        flex-direction: column;
+        text-align: center;
+        gap: 30px;
+    }
+
+    .hero-stats {
+        gap: 20px;
+    }
+
+    .hero-header {
+        padding: 0 20px;
+        height: auto;
+        min-height: 60vh;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero-stats {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .stat-item {
+        padding: 0;
+    }
+}

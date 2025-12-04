@@ -1,0 +1,454 @@
+/* static/css/detalhes.css */
+
+/* Estilos gerais para o body - você pode personalizar por página */
+body.detalhes-page {
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    min-height: 100vh;
+}
+
+.container {
+    position: relative;
+    z-index: 1;
+}
+
+/* Estilos do card de detalhes */
+.detalhes-card {
+    background: rgba(10, 10, 50, 0.9);
+    border: 1px solid #2a2a5a;
+    border-radius: 20px;
+    padding: 40px;
+    margin-bottom: 40px;
+    backdrop-filter: blur(10px);
+}
+
+.detalhes-imagem {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    border-radius: 15px;
+    border: 2px solid #2a2a5a;
+}
+
+.sem-imagem {
+    height: 400px;
+    background: linear-gradient(135deg, rgba(108, 99, 255, 0.1), rgba(163, 170, 255, 0.1));
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 2px dashed #2a2a5a;
+    color: #a3aaff;
+}
+
+.sem-imagem-icon {
+    font-size: 4rem;
+    margin-bottom: 15px;
+}
+
+.detalhes-titulo {
+    color: #ffffff;
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.badges-container {
+    text-align: center;
+}
+
+.classificacao-badge {
+    background: linear-gradient(135deg, #6c63ff, #5048c8);
+    font-size: 1rem;
+    padding: 8px 16px;
+    margin: 0 5px;
+}
+
+.estagio-badge {
+    background: linear-gradient(135deg, #17a2b8, #138496);
+    font-size: 1rem;
+    padding: 8px 16px;
+    margin: 0 5px;
+}
+
+.informacoes-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.info-item {
+    background: rgba(42, 42, 90, 0.6);
+    border: 1px solid #2a2a5a;
+    border-radius: 12px;
+    padding: 20px;
+    transition: all 0.3s ease;
+}
+
+.info-item:hover {
+    border-color: #6c63ff;
+    transform: translateY(-2px);
+}
+
+.info-item.full-width {
+    grid-column: 1 / -1;
+}
+
+.info-label {
+    color: #6c63ff;
+    font-weight: bold;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+
+.info-value {
+    color: #ffffff;
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.info-desc {
+    color: #a3aaff;
+    font-size: 0.85rem;
+    opacity: 0.8;
+}
+
+/* Estilos para a seção de descrição */
+.descricao-section {
+    background: rgba(42, 42, 90, 0.4);
+    border: 1px solid #2a2a5a;
+    border-radius: 15px;
+    padding: 30px;
+    margin-top: 30px;
+}
+
+.descricao-titulo {
+    color: #6c63ff;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #2a2a5a;
+    padding-bottom: 10px;
+}
+
+.descricao-content {
+    color: #e0e0ff;
+    font-size: 1.1rem;
+    line-height: 1.7;
+    text-align: justify;
+}
+
+.descricao-content p {
+    margin-bottom: 15px;
+}
+
+/* Estilos para informações adicionais */
+.informacoes-adicionais {
+    background: rgba(42, 42, 90, 0.4);
+    border: 1px solid #2a2a5a;
+    border-radius: 15px;
+    padding: 30px;
+}
+
+.info-adicional-titulo {
+    color: #6c63ff;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #2a2a5a;
+    padding-bottom: 10px;
+}
+
+.detalhes-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.btn-outline-primary {
+    border-color: #6c63ff;
+    color: #6c63ff;
+}
+
+.btn-outline-primary:hover {
+    background-color: #6c63ff;
+    border-color: #6c63ff;
+    color: white;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .detalhes-card {
+        padding: 20px;
+    }
+    
+    .detalhes-titulo {
+        font-size: 2rem;
+    }
+    
+    .informacoes-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .detalhes-imagem,
+    .sem-imagem {
+        height: 300px;
+    }
+    
+    .detalhes-actions {
+        flex-direction: column;
+    }
+    
+    .descricao-section,
+    .informacoes-adicionais {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 576px) {
+    .detalhes-titulo {
+        font-size: 1.8rem;
+    }
+    
+    .badges-container {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .classificacao-badge,
+    .estagio-badge {
+        margin: 0;
+    }
+    
+    .descricao-content {
+        font-size: 1rem;
+    }
+}
+
+/* Classes específicas para missões */
+.status-badge {
+    font-size: 0.9rem;
+    padding: 6px 12px;
+    margin: 0 3px;
+}
+
+.status-planejada {
+    background: linear-gradient(135deg, #6c63ff, #5048c8);
+}
+
+.status-ativa {
+    background: linear-gradient(135deg, #28a745, #218838);
+}
+
+.status-concluida {
+    background: linear-gradient(135deg, #17a2b8, #138496);
+}
+
+.status-falhou {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+}
+
+.status-cancelada {
+    background: linear-gradient(135deg, #6c757d, #545b62);
+}
+
+/* Timeline para missões */
+.timeline {
+    position: relative;
+    margin: 40px 0;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(to bottom, #6c63ff, #17a2b8);
+    transform: translateX(-50%);
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 40px;
+    display: flex;
+    justify-content: center;
+}
+
+.timeline-content {
+    background: rgba(42, 42, 90, 0.6);
+    border: 1px solid #2a2a5a;
+    border-radius: 12px;
+    padding: 20px;
+    width: 45%;
+    position: relative;
+}
+
+.timeline-item:nth-child(odd) .timeline-content {
+    margin-right: auto;
+    margin-left: 0;
+}
+
+.timeline-item:nth-child(even) .timeline-content {
+    margin-left: auto;
+    margin-right: 0;
+}
+
+.timeline-content::before {
+    content: '';
+    position: absolute;
+    top: 20px;
+    width: 20px;
+    height: 20px;
+    background: #6c63ff;
+    border-radius: 50%;
+}
+
+.timeline-item:nth-child(odd) .timeline-content::before {
+    right: -35px;
+}
+
+.timeline-item:nth-child(even) .timeline-content::before {
+    left: -35px;
+}
+
+/* Classes para astronautas */
+.astronauta-badge {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+    font-size: 0.9rem;
+    padding: 6px 12px;
+    margin: 0 3px;
+}
+
+.vivo-badge {
+    background: linear-gradient(135deg, #28a745, #218838);
+}
+
+.falecido-badge {
+    background: linear-gradient(135deg, #6c757d, #545b62);
+}
+
+.aposentado-badge {
+    background: linear-gradient(135deg, #17a2b8, #138496);
+}
+
+/* Grid de missões/astronautas */
+.items-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.item-card {
+    background: rgba(42, 42, 90, 0.4);
+    border: 1px solid #2a2a5a;
+    border-radius: 12px;
+    padding: 20px;
+    transition: all 0.3s ease;
+}
+
+.item-card:hover {
+    border-color: #6c63ff;
+    transform: translateY(-2px);
+}
+
+/* Informações numéricas destacadas */
+.info-number {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #6c63ff;
+    margin-bottom: 5px;
+}
+
+.info-label-small {
+    color: #a3aaff;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Classes específicas para Universo */
+
+/* Galáxias */
+.galaxia-badge {
+    background: linear-gradient(135deg, #9d4edd, #7b2cbf);
+    font-size: 0.9rem;
+    padding: 6px 12px;
+    margin: 0 3px;
+}
+
+.tipo-espiral { background: linear-gradient(135deg, #4361ee, #3a0ca3); }
+.tipo-eliptica { background: linear-gradient(135deg, #f72585, #b5179e); }
+.tipo-irregular { background: linear-gradient(135deg, #4cc9f0, #4361ee); }
+.tipo-lenticular { background: linear-gradient(135deg, #7209b7, #560bad); }
+.tipo-ana { background: linear-gradient(135deg, #f8961e, #f3722c); }
+
+/* Sistemas Planetários */
+.sistema-badge {
+    background: linear-gradient(135deg, #ff9e00, #ff9100);
+    font-size: 0.9rem;
+    padding: 6px 12px;
+    margin: 0 3px;
+}
+
+/* Nebulosas */
+.nebulosa-badge {
+    background: linear-gradient(135deg, #00b4d8, #0077b6);
+    font-size: 0.9rem;
+    padding: 6px 12px;
+    margin: 0 3px;
+}
+
+.tipo-emissao { background: linear-gradient(135deg, #ff006e, #fb5607); }
+.tipo-reflexao { background: linear-gradient(135deg, #3a86ff, #8338ec); }
+.tipo-negra { background: linear-gradient(135deg, #343a40, #495057); }
+.tipo-planetaria { background: linear-gradient(135deg, #38b000, #70e000); }
+.tipo-supernova { background: linear-gradient(135deg, #ff595e, #ffca3a); }
+
+/* Informações numéricas especiais */
+.distance-value {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #4cc9f0;
+}
+
+.size-value {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #ff9e00;
+}
+
+.mass-value {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #f72585;
+}
+
+/* Grade de sistemas/nebulosas */
+.mini-items-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.mini-item-card {
+    background: rgba(42, 42, 90, 0.4);
+    border: 1px solid #2a2a5a;
+    border-radius: 10px;
+    padding: 15px;
+    transition: all 0.3s ease;
+}
+
+.mini-item-card:hover {
+    border-color: #6c63ff;
+    transform: translateY(-2px);
+}

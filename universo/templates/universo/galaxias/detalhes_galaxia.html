@@ -1,0 +1,165 @@
+<!-- templates/universo/galaxias/detalhes_galaxia.html -->
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ galaxia.nome }} - Detalhes da Galáxia{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/detalhes.css' %}">
+<style>
+    body.detalhes-page {
+        background: linear-gradient(rgba(13, 13, 43, 0.9), rgba(25, 25, 112, 0.9)),
+                    url('/static/images/galaxy-detail-bg.jpg');
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- Botão Voltar -->
+    <div class="mb-4">
+        <a href="{% url 'listar_galaxias' %}" class="btn btn-outline-primary">
+            ← Voltar para Galáxias
+        </a>
+    </div>
+
+    <!-- Card Principal de Detalhes -->
+    <div class="detalhes-card">
+        <div class="row">
+            <!-- Coluna da Imagem -->
+            <div class="col-md-6">
+                {% if galaxia.imagem %}
+                    <img src="{{ galaxia.imagem.url }}" alt="{{ galaxia.nome }}" class="detalhes-imagem">
+                {% else %}
+                    <div class="sem-imagem">
+                        <div class="sem-imagem-icon">🌌</div>
+                        <p>Imagem não disponível</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Coluna das Informações -->
+            <div class="col-md-6">
+                <div class="detalhes-content">
+                    <h1 class="detalhes-titulo">{{ galaxia.nome }}</h1>
+                    
+                    <!-- Badges -->
+                    <div class="badges-container mb-4">
+                        <span class="badge tipo-{{ galaxia.tipo }}">
+                            {{ galaxia.get_tipo_display }}
+                        </span>
+                        <span class="badge galaxia-badge">
+                            Galáxia
+                        </span>
+                    </div>
+
+                    <!-- Informações Principais -->
+                    <div class="informacoes-grid">
+                        {% if galaxia.diametro %}
+                        <div class="info-item">
+                            <div class="info-label">Diâmetro</div>
+                            <div class="info-value size-value">{{ galaxia.diametro|floatformat:0 }} anos-luz</div>
+                        </div>
+                        {% endif %}
+
+                        {% if galaxia.massa %}
+                        <div class="info-item">
+                            <div class="info-label">Massa</div>
+                            <div class="info-value mass-value">{{ galaxia.massa|floatformat:0 }} massas solares</div>
+                        </div>
+                        {% endif %}
+
+                        {% if galaxia.distancia_terra %}
+                        <div class="info-item">
+                            <div class="info-label">Distância da Terra</div>
+                            <div class="info-value distance-value">{{ galaxia.distancia_terra|floatformat:0 }} anos-luz</div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Descrição -->
+        {% if galaxia.descricao %}
+        <div class="descricao-section mt-5">
+            <h3 class="descricao-titulo">Sobre {{ galaxia.nome }}</h3>
+            <div class="descricao-content">
+                {{ galaxia.descricao|linebreaks }}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Sistemas Planetários -->
+        {% if sistemas %}
+        <div class="informacoes-adicionais mt-5">
+            <h3 class="info-adicional-titulo">Sistemas Planetários ({{ sistemas.count }})</h3>
+            <div class="mini-items-grid mt-4">
+                {% for sistema in sistemas %}
+                <div class="mini-item-card">
+                    <h5>{{ sistema.nome }}</h5>
+                    <p class="text-muted">Estrela: {{ sistema.estrela_principal }}</p>
+                    {% if sistema.numero_planetas %}
+                        <p class="text-info">{{ sistema.numero_planetas }} planeta(s)</p>
+                    {% endif %}
+                    {% if sistema.idade %}
+                        <p class="text-warning">{{ sistema.idade }} bilhões de anos</p>
+                    {% endif %}
+                    <a href="{% url 'detalhes_sistema' sistema.pk %}" class="btn btn-sm btn-outline-primary mt-2">Ver Sistema</a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Estatísticas -->
+        <div class="informacoes-adicionais mt-4">
+            <h3 class="info-adicional-titulo">Estatísticas</h3>
+            <div class="row mt-4">
+                <div class="col-md-4">
+                    <div class="info-item text-center">
+                        <div class="info-number">{{ sistemas.count }}</div>
+                        <div class="info-label-small">Sistemas</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="info-item text-center">
+                        <div class="info-number">
+                            {{ total_planetas }}
+                        </div>
+                        <div class="info-label-small">Planetas</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="info-item text-center">
+                        <div class="info-number">
+                            {% if galaxia.tipo == 'espiral' %}Espiral
+                            {% elif galaxia.tipo == 'eliptica' %}Elíptica
+                            {% elif galaxia.tipo == 'irregular' %}Irregular
+                            {% elif galaxia.tipo == 'lenticular' %}Lenticular
+                            {% else %}Anã{% endif %}
+                        </div>
+                        <div class="info-label-small">Classificação</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ações do Admin -->
+        {% if user.is_superuser %}
+        <div class="detalhes-actions mt-4 pt-4 border-top">
+            <a href="{% url 'editar_galaxia' galaxia.pk %}" class="btn btn-warning">
+                Editar Galáxia
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- CSRF Token para exclusão -->
+<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/confirmacao-exclusao.js' %}"></script>
+{% endblock %}

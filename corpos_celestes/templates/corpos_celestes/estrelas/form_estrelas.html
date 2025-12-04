@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ titulo }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/listagens.css' %}">
+<link rel="stylesheet" href="{% static 'css/form.css' %}">
+<style>
+    .hero-header {
+        background: linear-gradient(135deg, rgba(10, 10, 50, 0.55) 0%, rgba(30, 30, 80, 0.95) 100%), 
+        url('/static/images/stars2.jpg') center/cover no-repeat;
+    }
+</style>
+{% endblock %}
+
+{% block hero %}
+<div class="hero-header">
+    <div class="hero-wrapper">
+        <div class="hero-content">
+            <div class="btn-voltar-container">
+                <a href="{% url 'listar_estrelas' %}" class="btn-voltar">
+                    ← Voltar para Estrelas
+                </a>
+            </div>
+            <h1 class="display-1 fw-bold">{{ titulo }}</h1>
+            <p class="lead">
+                {% if titulo == "Criar Estrela" %}
+                Adicione uma nova estrela ao catálogo cósmico
+                {% else %}
+                Edite as informações da estrela
+                {% endif %}
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="form-container">
+        <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+                <strong>Erro!</strong> Por favor, corrija os erros abaixo.
+                {{ form.non_field_errors }}
+            </div>
+            {% endif %}
+
+            <!-- Linha 1: Nome e Sistema -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">{{ form.nome.label }}</label>
+                        <input type="text" name="{{ form.nome.name }}" class="form-control"
+                               value="{{ form.nome.value|default:'' }}"
+                               placeholder="Ex: Sol, Sirius, Betelgeuse">
+                        {% if form.nome.errors %}
+                            <ul class="error-list">{% for error in form.nome.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">{{ form.sistema_planetario.label }}</label>
+                        <select name="{{ form.sistema_planetario.name }}" class="form-select">
+                            <option value="">Selecione um sistema</option>
+                            {% for choice in form.sistema_planetario.field.choices %}
+                                <option value="{{ choice.0 }}"
+                                    {% if form.sistema_planetario.value == choice.0 %}selected{% endif %}>
+                                    {{ choice.1 }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        {% if form.sistema_planetario.errors %}
+                            <ul class="error-list">{% for error in form.sistema_planetario.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Linha 2: Classificação e Estágio -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">Classificação Espectral</label>
+                        <select name="{{ form.classificacao_espectral.name }}" class="form-select">
+                            <option value="">Selecione...</option>
+                            {% for choice in form.classificacao_espectral.field.choices %}
+                                <option value="{{ choice.0 }}"
+                                    {% if form.classificacao_espectral.value == choice.0 %}selected{% endif %}>
+                                    {{ choice.1 }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        {% if form.classificacao_espectral.errors %}
+                            <ul class="error-list">{% for error in form.classificacao_espectral.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">Estágio Evolutivo</label>
+                        <select name="{{ form.estagio_evolutivo.name }}" class="form-select">
+                            <option value="">Selecione...</option>
+                            {% for choice in form.estagio_evolutivo.field.choices %}
+                                <option value="{{ choice.0 }}"
+                                    {% if form.estagio_evolutivo.value == choice.0 %}selected{% endif %}>
+                                    {{ choice.1 }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        {% if form.estagio_evolutivo.errors %}
+                            <ul class="error-list">{% for error in form.estagio_evolutivo.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Linha 3: Massa e Temperatura -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">{{ form.massa.label }}</label>
+                        <input type="number" step="0.001" name="{{ form.massa.name }}"
+                               class="form-control"
+                               value="{{ form.massa.value|default:'' }}"
+                               placeholder="Ex: 1.0">
+                        <div class="help-text">1.0 = massa do Sol</div>
+                        {% if form.massa.errors %}
+                            <ul class="error-list">{% for error in form.massa.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">{{ form.temperatura.label }}</label>
+                        <input type="number" name="{{ form.temperatura.name }}"
+                               class="form-control"
+                               value="{{ form.temperatura.value|default:'' }}"
+                               placeholder="Ex: 5778">
+                        {% if form.temperatura.errors %}
+                            <ul class="error-list">{% for error in form.temperatura.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Imagem -->
+            <div class="form-group">
+                <label class="form-label">{{ form.imagem.label }}</label>
+                <input type="file" name="{{ form.imagem.name }}" class="form-control">
+                {% if form.imagem.errors %}
+                    <ul class="error-list">{% for error in form.imagem.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                {% endif %}
+            </div>
+
+            <!-- Descrição -->
+            <div class="form-group">
+                <label class="form-label">{{ form.descricao.label }}</label>
+                <textarea name="{{ form.descricao.name }}"
+                          class="form-control form-textarea"
+                          placeholder="Descreva características da estrela...">{{ form.descricao.value|default:'' }}</textarea>
+                {% if form.descricao.errors %}
+                    <ul class="error-list">{% for error in form.descricao.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                {% endif %}
+            </div>
+
+            <!-- Botões -->
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary btn-form">
+                    {% if titulo == "Criar Estrela" %} Criar Estrela{% else %} Salvar Alterações{% endif %}
+                </button>
+                <a href="{% url 'listar_estrelas' %}" class="btn btn-secondary btn-form"> Cancelar</a>
+            </div>
+
+        </form>
+    </div>
+</div>
+{% endblock %}

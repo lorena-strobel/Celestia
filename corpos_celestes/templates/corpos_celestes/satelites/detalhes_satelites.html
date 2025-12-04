@@ -1,0 +1,111 @@
+<!-- templates/corpos_celestes/satelites/detalhes_satelite.html -->
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ satelite.nome }} - Detalhes do Satélite{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/detalhes.css' %}">
+<style>
+    body.detalhes-page {
+        background: linear-gradient(rgba(13, 13, 13, 0.9), rgba(25, 25, 25, 0.9)),
+                    url('/static/images/moons-bg.jpg');
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- Botão Voltar -->
+    <div class="mb-4">
+        <a href="{% url 'listar_satelites' %}" class="btn btn-outline-primary">
+            ← Voltar para Satélites
+        </a>
+    </div>
+
+    <!-- Card Principal de Detalhes -->
+    <div class="detalhes-card">
+        <div class="row">
+            <!-- Coluna da Imagem -->
+            <div class="col-md-6">
+                {% if satelite.imagem %}
+                    <img src="{{ satelite.imagem.url }}" alt="{{ satelite.nome }}" class="detalhes-imagem">
+                {% else %}
+                    <div class="sem-imagem">
+                        <div class="sem-imagem-icon">🌕</div>
+                        <p>Imagem não disponível</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Coluna das Informações -->
+            <div class="col-md-6">
+                <div class="detalhes-content">
+                    <h1 class="detalhes-titulo">{{ satelite.nome }}</h1>
+                    
+                    <!-- Badges -->
+                    <div class="badges-container mb-4">
+                        <span class="badge classificacao-badge">
+                            Satélite Natural
+                        </span>
+                        <span class="badge estagio-badge">
+                            Lua de {{ satelite.planeta.nome }}
+                        </span>
+                    </div>
+
+                    <!-- Informações Principais -->
+                    <div class="informacoes-grid">
+                        <div class="info-item">
+                            <div class="info-label">Diâmetro</div>
+                            <div class="info-value">{{ satelite.diametro|floatformat:2 }} km</div>
+                        </div>
+
+                        {% if satelite.massa %}
+                        <div class="info-item">
+                            <div class="info-label">Massa</div>
+                            <div class="info-value">{{ satelite.massa|floatformat:2 }} kg</div>
+                        </div>
+                        {% endif %}
+
+                        <div class="info-item">
+                            <div class="info-label">Planeta Orbital</div>
+                            <div class="info-value">
+                                <a href="{% url 'detalhes_planeta' satelite.planeta.id %}" class="text-decoration-none">
+                                    {{ satelite.planeta.nome }}
+                                </a>
+                            </div>
+                        </div>
+
+                        {% if satelite.planeta.sistema_planetario %}
+                        <div class="info-item">
+                            <div class="info-label">Sistema Planetário</div>
+                            <div class="info-value">
+                                {{ satelite.planeta.sistema_planetario.nome }}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if satelite.descricao %}
+        <div class="descricao-section mt-5">
+            <h3 class="descricao-titulo">Sobre: {{ satelite.nome }}</h3>
+            <div class="descricao-content">
+                {{ satelite.descricao|linebreaks }}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Ações do Admin -->
+        {% if user.is_superuser %}
+        <div class="detalhes-actions mt-4 pt-4 border-top">
+            <a href="{% url 'editar_satelite' satelite.id %}" class="btn btn-warning">
+                Editar Satélite
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

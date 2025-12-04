@@ -1,0 +1,165 @@
+<!-- templates/exploracao_espacial/astronautas/detalhes_astronautas.html -->
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ astronauta.nome }} - Perfil do Astronauta{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/detalhes.css' %}">
+<style>
+    body.detalhes-page {
+        background: linear-gradient(rgba(30, 30, 60, 0.9), rgba(50, 50, 90, 0.9)),
+                    url('/static/images/astronaut-detail-bg.jpg');
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- Botão Voltar -->
+    <div class="mb-4">
+        <a href="{% url 'listar_astronautas' %}" class="btn btn-outline-primary">
+            ← Voltar para Astronautas
+        </a>
+    </div>
+
+    <!-- Card Principal de Detalhes -->
+    <div class="detalhes-card">
+        <div class="row">
+            <!-- Coluna da Imagem -->
+            <div class="col-md-4">
+                {% if astronauta.foto %}
+                    <img src="{{ astronauta.foto.url }}" alt="{{ astronauta.nome }}" class="detalhes-imagem" style="height: 350px;">
+                {% else %}
+                    <div class="sem-imagem" style="height: 350px;">
+                        <div class="sem-imagem-icon">👨‍🚀</div>
+                        <p>Foto não disponível</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Coluna das Informações -->
+            <div class="col-md-8">
+                <div class="detalhes-content">
+                    <h1 class="detalhes-titulo">{{ astronauta.nome }}</h1>
+                    
+                    <!-- Badges -->
+                    <div class="badges-container mb-4">
+                        <span class="badge {% if astronauta.esta_vivo %}vivo-badge{% else %}falecido-badge{% endif %}">
+                            {% if astronauta.esta_vivo %}Vivo{% else %}Falecido{% endif %}
+                        </span>
+                        <span class="badge astronauta-badge">
+                            {{ astronauta.get_status_display }}
+                        </span>
+                        <span class="badge classificacao-badge">
+                            {{ astronauta.get_genero_display }}
+                        </span>
+                        <span class="badge estagio-badge">
+                            {{ astronauta.nacionalidade }}
+                        </span>
+                    </div>
+
+                    <!-- Informações Principais -->
+                    <div class="informacoes-grid">
+                        <div class="info-item">
+                            <div class="info-label">Idade</div>
+                            <div class="info-value">{{ astronauta.idade }} anos</div>
+                        </div>
+
+                        <div class="info-item">
+                            <div class="info-label">Data de Nascimento</div>
+                            <div class="info-value">{{ astronauta.data_nascimento|date:"d/m/Y" }}</div>
+                        </div>
+
+                        {% if astronauta.data_falecimento %}
+                        <div class="info-item">
+                            <div class="info-label">Data de Falecimento</div>
+                            <div class="info-value">{{ astronauta.data_falecimento|date:"d/m/Y" }}</div>
+                        </div>
+                        {% endif %}
+
+                        <div class="info-item">
+                            <div class="info-label">Total de Missões</div>
+                            <div class="info-value">{{ astronauta.total_missoes }}</div>
+                        </div>
+                    </div>
+
+                    <!-- Estatísticas -->
+                    <div class="row mt-4">
+                        <div class="col-md-4">
+                            <div class="info-item text-center">
+                                <div class="info-number">{{ astronauta.idade }}</div>
+                                <div class="info-label-small">Anos</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="info-item text-center">
+                                <div class="info-number">{{ astronauta.total_missoes }}</div>
+                                <div class="info-label-small">Missões</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="info-item text-center">
+                                <div class="info-number">
+                                    {% if astronauta.esta_vivo %}SIM{% else %}NÃO{% endif %}
+                                </div>
+                                <div class="info-label-small">Ativo</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Biografia -->
+        {% if astronauta.biografia %}
+        <div class="descricao-section mt-5">
+            <h3 class="descricao-titulo">Biografia</h3>
+            <div class="descricao-content">
+                {{ astronauta.biografia|linebreaks }}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Missões Participadas -->
+        {% if missoes %}
+        <div class="informacoes-adicionais mt-5">
+            <h3 class="info-adicional-titulo">Missões Participadas ({{ missoes.count }})</h3>
+            <div class="items-grid mt-4">
+                {% for missao in missoes %}
+                <div class="item-card">
+                    <h5>{{ missao.nome }}</h5>
+                    <p class="text-muted">{{ missao.agencia }}</p>
+                    <p>
+                        <span class="badge {% if missao.status == 'ativa' %}bg-success
+                                           {% elif missao.status == 'concluida' %}bg-info
+                                           {% else %}bg-secondary{% endif %}">
+                            {{ missao.get_status_display }}
+                        </span>
+                    </p>
+                    <p class="text-muted">Lançamento: {{ missao.data_lancamento|date:"d/m/Y" }}</p>
+                    <a href="{% url 'detalhes_missao' missao.pk %}" class="btn btn-sm btn-outline-primary mt-2">Ver Missão</a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Ações do Admin -->
+        {% if user.is_superuser %}
+        <div class="detalhes-actions mt-4 pt-4 border-top">
+            <a href="{% url 'editar_astronauta' astronauta.pk %}" class="btn btn-warning">
+                Editar Astronauta
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- CSRF Token para exclusão -->
+<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/confirmacao-exclusao.js' %}"></script>
+{% endblock %}

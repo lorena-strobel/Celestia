@@ -1,0 +1,63 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>{% block title %}Celestia{% endblock %}</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- CSS próprio -->
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+
+    <!-- CSS extra de cada página -->
+    {% block extra_css %}{% endblock %}
+
+    <!-- CSRF para JavaScript (extra, não substitui o form) -->
+    <meta name="csrf-token" content="{{ csrf_token }}">
+</head>
+
+<body>
+
+    <form style="display:none;">
+        {% csrf_token %}
+    </form>
+
+    <!-- Navbar -->
+    {% include 'includes/navbar.html' %}
+
+    {% if messages %}
+      <div class="container mt-3">
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <!-- Header opcional -->
+    {% block header %}{% endblock %}
+
+    <!-- Hero opcional -->
+    {% block hero %}{% endblock %}
+
+    <!-- Conteúdo principal -->
+    <main class="container my-5">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    {% include 'includes/footer.html' %}
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="{% static 'js/simple-delete.js' %}"></script>
+
+</body>
+</html>
